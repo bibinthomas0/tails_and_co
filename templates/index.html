@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block section %}  <div class="row text-center pt-3">
+    <div class="col-lg-6 m-auto">
+        <h1 class="h1">Categories of The Month</h1>
+        <p>
+            Beyond pets, we also stock a diverse range of pet supplies and accessories to meet all your furry friends' needs.
+        </p>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12 col-md-4 p-5 mt-3">
+        {% with id=1 %}
+        <a href="category/{{id}}"><img src="{% static '/img/petss.jpg' %}" class="rounded-circle img-fluid border"></a>
+        <h5 class="text-center mt-3 mb-3">Need Pet</h5>
+        <p class="text-center"><a class="btn btn-success" href="category/{{id}}">Go Shop</a></p>
+        {% endwith %}
+    </div>
+    {% with id=3   %}
+    <div class="col-12 col-md-4 p-5 mt-3">
+        <a href="category/{{id}}"><img src="{% static '/img/eatingdog.png' %}" class="rounded-circle img-fluid border"></a>
+        <h2 class="h5 text-center mt-3 mb-3">For Them</h2>
+        <p class="text-center"><a class="btn btn-success">Go Shop</a></p>
+    </div>{% endwith %}
+    <div class="col-12 col-md-4 p-5 mt-3">
+        {% with id=4 %}
+        <a href="category/{{id}}"><img src="{% static 'img/dogtoyy.jpg' %}" class="rounded-circle img-fluid border"></a>
+        <h2 class="h5 text-center mt-3 mb-3">Accessories</h2>
+        <p class="text-center"><a class="btn btn-success" href="category/{{id}}">Go Shop</a></p>
+        {% endwith %}
+    </div>
+</div>{% endblock  %}
+{% block featured %}{% endblock  %}

@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Categories{% endblock  %}
+{% block staticc %} 
+<!-- CSS FILES -->        
+{% comment %} <link rel="preconnect" href="https://fonts.googleapis.com">
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> {% endcomment %}
+
+{% comment %} <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Open+Sans&display=swap" rel="stylesheet"> {% endcomment %}
+                
+<link href="{% static '/css/csst/bootstrap.min.css' %}" rel="stylesheet">
+
+<link href="{% static 'css/csst/bootstrap-icons.css' %}" rel="stylesheet">
+
+<link href="{% static 'css/csst/templatemo-topic-listing.css' %}" rel="stylesheet">
+ {% endblock  %}
+{% block content %}
+<section class="explore-section section-padding" id="section_2">
+    <div class="container">
+            <div class="col-12 text-center">
+                <h2 class="mb-4">Select your favourite</h1>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    
+                    <a href=""> <button class="nav-link" id="marketing-tab" >All</button></a>
+                </li>
+                {% for c in cate %}
+               
+                <li class="nav-item" role="presentation">
+                   <a href="{% url 'subcategory' c_id=c.category.id s_id=c.id %}"> <button class="nav-link" id="marketing-tab" >{{c.subcategory_name}}</button></a>
+                </li>
+                {% endfor %}
+                {% comment %} <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="finance-tab" data-bs-toggle="tab" data-bs-target="#finance-tab-pane" type="button" role="tab" aria-controls="finance-tab-pane" aria-selected="false">Fish</button>
+                </li>
+
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="music-tab" data-bs-toggle="tab" data-bs-target="#music-tab-pane" type="button" role="tab" aria-controls="music-tab-pane" aria-selected="false">Pig</button>
+                </li>
+
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="education-tab" data-bs-toggle="tab" data-bs-target="#education-tab-pane" type="button" role="tab" aria-controls="education-tab-pane" aria-selected="false">Education</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="education-tab" data-bs-toggle="tab" data-bs-target="#education-tab-pane" type="button" role="tab" aria-controls="education-tab-pane" aria-selected="false">Education</button>
+                </li> {% endcomment %}
+            </ul>
+        </div>
+    </div>
+{% block one %}
+    <div class="container">
+        <div class="row">
+
+            <div class="col-12">
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="design-tab-pane" role="tabpanel" aria-labelledby="design-tab" tabindex="0">
+                        <div class="row">
+                            
+                            {% for d  in data %}
+                            {% if d.productimage_set.first %}
+                            <div class="col-lg-3 col-md-4 col-12 mb-2 mb-lg-0">
+                                <div class="custom-block bg-white shadow-lg">
+                                    
+                                    <a href="{% url 'singproduct' id=d.productcolor_set.first.id %}">
+                                        <div class="d-flex">
+                                            <div>
+                                                <h5 class="mb-2">{{d.name}}</h5>
+
+                                                {% comment %} <p class="mb-0">{{d.productcolor_set.first.description}}</p> {% endcomment %}
+                                            </div>
+
+                                            <span class="badge bg-design rounded-pill bg-black ms-auto">{{d.productcolor_set.first.stock}}</span>
+                                        </div>
+                                        {% with image=d.productimage_set.first %}
+                                        {% if image %}
+                                        <img src="{{ image.image.url }}" class="custom-block-image img-fluid" alt="">
+                                        {% endif %}
+                                        {% endwith %}
+                                    </a>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% endfor %}
+                           
+
+                           
+    </div>{% endblock  %}
+</section>
+{% endblock  %}

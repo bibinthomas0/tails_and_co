@@ -1,0 +1,71 @@
+{% extends 'baseprof.html' %}
+{% load static %}
+{% block title %}Adress{% endblock %}
+{% block static %} 
+{% comment %} <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> {% endcomment %}
+<link rel="stylesheet" href="{% static 'css/fullprof.css' %}">
+<link rel="stylesheet" href="{% static 'css/address.css' %}">{% endblock  %}
+
+{%block sidebar %}Add New Address
+</h4>
+<div class="card overflow-hidden">
+  <div class="row no-gutters row-bordered row-border-light">
+    <div class="col-md-3 pt-0">
+      <div class="list-group list-group-flush account-settings-links">
+        <a class="list-group-item list-group-item-action "  href="{% url 'profile' %}">Profile</a>
+        <a class="list-group-item list-group-item-action active"  href="/address/{{d.id}}">Address</a>
+        <a class="list-group-item list-group-item-action" data-toggle="list" href="#account-info">change password</a>
+        <a class="list-group-item list-group-item-action" data-toggle="list" href="#account-social-links">wishlist</a>
+        <a class="list-group-item list-group-item-action" data-toggle="list" href="#account-connections">Connections</a>
+        <a class="list-group-item list-group-item-action" data-toggle="list" href="#account-notifications">Notifications</a>
+      </div>
+    </div>
+{% endblock  %}
+{% block profile %}
+<form  method="post" action="">
+    {% csrf_token %}
+    <div class="form-row">
+      <div class="col-md-6 mb-3">
+        <label for="validationDefault01">First name</label>
+        <input type="text" class="form-control" id="validationDefault01" value="Mark" required name="house">
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="validationDefault02">Last name</label>
+        <input type="text" class="form-control" id="validationDefault02" value="Otto" required name="landmark">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-md-6 mb-3">
+        <label for="validationDefault03">City</label>
+        <input type="text" class="form-control" id="validationDefault03" required name="city">
+      </div>
+      <div class="col-md-3 mb-3">
+        <label for="validationDefault04">State</label>
+        <select class="custom-select" id="validationDefault04" required name="state">
+          <option selected disabled value="">Choose...</option>
+          <option>kerala</option>
+        </select>
+      </div>
+      <div class="col-md-3 mb-3">
+        <label for="validationDefault05">Zip</label>
+        <input type="text" class="form-control" id="validationDefault05" required name="pincode">
+      </div>
+    </div>
+    <div class="col-md-3 mb-3">
+      <label for="validationDefault05">gr</label>
+      <input type="text" class="form-control" id="validationDefault05" required name="gender">
+    </div>
+  </div>
+    <div class="form-group">
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="" id="invalidCheck2" required>
+        <label class="form-check-label" for="invalidCheck2">
+          Agree to terms and conditions
+        </label>
+      </div>
+    </div>
+    <button class="btn btn-primary" type="submit">Submit form</button>
+  </form>
+  
+    {% endblock  %}
+   

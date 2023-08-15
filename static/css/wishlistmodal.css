@@ -1,0 +1,78 @@
+@import url(https://fonts.googleapis.com/css?family=Calibri:400,300,700);
+
+
+
+.mt-100{
+
+    margin-top:100px;
+
+}
+
+.modal-button {
+    background-color:rgb(29, 226, 226);
+    border-color: rgb(29, 226, 226);
+    border-radius: 6px;
+    color: white;
+    font-size: 17px;
+    padding-right: 76px;
+    padding-left: 76px;
+}
+
+.card1{
+    border-radius: 3vh;
+    margin: auto;
+    max-width: 380px;
+    padding: 7vh 6vh;
+    align-items: center;
+    box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+@media(max-width:767px){
+    .card1{
+        width: 90vw;
+    }
+}
+.card-img{
+    padding: 20px 0; 
+    width: 40%;  
+}
+
+.card-img img{
+    opacity: 0.7;
+}
+.card1-title{
+    margin-bottom: unset;
+}
+.card1-title p{
+    color: rgb(29, 226, 226);
+    font-weight: 900;
+    font-size: 30px;
+    margin-bottom: unset;
+}
+.card1-text p{
+    color: grey;
+    font-size: 25px;
+    text-align: center;
+    padding: 3vh 0;
+    font-weight: lighter;
+}
+.btn1{
+    width: 100%;
+    background-color: rgb(29, 226, 226);
+    border-color: rgb(29, 226, 226);
+    border-radius: 25px;
+    color: white;
+    font-size: 20px;
+}
+.btn1:focus{
+    box-shadow: none;
+    outline: none;
+    box-shadow: none;
+    color: white;
+    -webkit-box-shadow: none;
+    -webkit-user-select: none;
+    transition: none; 
+}
+.btn1:hover{
+    color: white;
+}

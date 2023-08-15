@@ -1,0 +1,53 @@
+{% extends 'admin/index.html' %}
+{% block content %}
+        <div class=" col-md-6">
+            <form method="post" action="">
+                {% csrf_token %}
+                <div class="modal-header">						
+                    <h4 class="modal-title">Edit</h4>
+                </div>
+                <div class="modal-body">					
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea class="form-control" required name="description" rows="5">{{pro.description}}</textarea>
+                    </div>			
+                </div>
+                
+                <div class="modal-body">					
+                    <div class="form-group">
+                        <label>Stock</label>
+                        <input type="text" class="form-control" required name="stock" value="{{pro.stock}}">
+                    </div>			
+                </div>
+                <div class="modal-body">					
+                    <div class="form-group">
+                        <label>Gender</label>
+                        <input type="text" class="form-control" required name="gender" value="{{pro.gender}}">
+                    </div>			
+                </div>
+                <div class="modal-body">					
+                    <div class="form-group">
+                        <label>Age</label>
+                        <input type="text" class="form-control" required name="age" value="{{pro.age}}">
+                    </div>			
+                </div>
+                <div class="modal-body">					
+                    <div class="form-group">
+                        <label>Color</label>
+                        <input type="text" class="form-control" required name="color" value="{{pro.color}}">
+                    </div>			
+                </div>
+                <div class="modal-body">					
+                    <div class="form-group">
+                        <label>Price</label>
+                        <input type="text" class="form-control" required name="price" value="{{pro.price}}">
+                    </div>			
+                </div>
+                <div class="modal-footer">
+                    <!-- <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel"> -->
+                    <input type="submit" class="btn btn-success" value="Add">
+                </div>
+            </form>
+        </div>
+  
+   {% endblock  %}

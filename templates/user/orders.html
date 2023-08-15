@@ -1,0 +1,51 @@
+{% extends 'user/profile.html' %}
+{% load static %}
+{% block st %}
+<link rel="stylesheet" href="{% static '/css/styles.min.css' %}">
+  {% endblock  %}
+
+{% block contents %}
+<div class="row">
+  <div class="col-lg-12 p-5 bg-white rounded shadow-sm mb-5">
+
+    <h3>Orders</h3>
+    <div class="table-responsive">
+      <table class="table">
+      
+        <tbody>
+          {% for order in orders %} <div style="border-radius: 3px; border-color:black;">
+          <tr >
+            <th scope="row" class="border-0" >
+              <div class="p-2" style="  margin-bottom: 20px;">
+
+                {% for order_item in order.items.all %}
+    <img src="{{ order_item.product.productimage_set.first.image.url }}" alt="" width="70" class="img-fluid rounded shadow-sm">
+{% endfor %}
+                <div class="ml-3 d-inline-block align-middle">
+                 
+                  <h5 class="mb-0"> <a href="#" class="text-dark d-inline-block align-middle"> {{order.address.custom_name}}</a></h5><span class="text-muted font-weight-normal font-italic d-block">Destination:{{order.address.pincode}}</span>
+               
+                </div></div>
+              
+            </th>
+            <td class="border-0 align-middle"><strong>₹{{order.total_price}}</strong></td>
+            <td class="border-0 align-middle"><strong>Nos:{{order.items.count}}</strong></td>
+            <td class="border-0 align-middle"> <a href="{% url 'order_deatails' id=order.id %}"><button type="button" class="btn btn-secondary btn-sm">See ordered items</button></td></a>
+        
+          </tr></div>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <!-- End -->
+  </div>
+</div>
+
+
+
+
+
+
+
+
+{% endblock  %}

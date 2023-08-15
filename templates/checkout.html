@@ -1,0 +1,351 @@
+{% extends 'base.html' %}
+{% comment %} {% load custom_tags %} {% endcomment %}
+{% block title %}Checkout{% endblock  %}
+{% block staticc %}
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/5.3.45/css/materialdesignicons.css" integrity="sha256-NAxhqDvtY0l4xn+YVa6WjAcmd94NNfttjNsDmNatFVc=" crossorigin="anonymous" />
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+{% endblock  %}
+
+{% block content %}
+
+
+<div class="container">
+
+    <div class="row">
+        <div class="col-xl-6 mt-5">
+
+            <div class="card">
+                <div class="card-body">
+                    <ol class="activity-checkout mb-0 px-4 mt-3">
+                        <li class="checkout-item">
+                            <div class="avatar checkout-icon p-1">
+                                <div class="avatar-title rounded-circle bg-primary">
+                                    <i class="bx bxs-receipt text-white font-size-20"></i>
+                                </div>
+                            </div>
+                            <div class="feed-item-list">
+                                <div>
+                                    <h5 class="font-size-16 mb-1">Billing Info</h5>
+                                    <p class="text-muted text-truncate mb-4">Create Newaddress</p>
+                                    <div class="mb-3">
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="checkout-item">
+                            <div class="avatar checkout-icon p-1">
+                                <div class="avatar-title rounded-circle bg-primary">
+                                    <i class="bx bxs-truck text-white font-size-20"></i>
+                                </div>
+                            </div>
+                            <div class="feed-item-list">
+                                <form id="checkout-form" action="{% url 'selectaddress' %}" method="post">
+                                    {% csrf_token %}
+                                <div>
+                                   
+                                    <h5 class="font-size-16 mb-1">Shipping Info</h5>
+                                    <p class="text-muted text-truncate mb-4">Select your address</p>
+                                    <div class="mb-3">
+                                        <div class="row">
+                                            {% if address %}
+                                            {% for add in address %}
+                                            {% if forloop.counter <= 2 %}
+                                            <div class="col-lg-4 col-sm-6">
+                                                <div data-bs-toggle="collapse">
+                                                    <label class="card-radio-label mb-0">
+                                                        <input type="radio" name="address" id="info-address1" class="card-radio-input" checked="" value="{{add.id}}">
+                                                        <div class="card-radio text-truncate p-3">
+                                                            <span class="fs-14 mb-4 d-block">Address {{forloop.counter}}</span>
+                                                            <span class="fs-14 mb-2 d-block">{{add.custom_name}}</span>
+                                                            <span class="text-muted fw-normal text-wrap mb-1 d-block">{{add.house_name}}</span>
+                                                            <span class="text-muted fw-normal text-wrap mb-1 d-block">{{add.landmark}},{{add.city}}</span>
+                                                            <span class="text-muted fw-normal text-wrap mb-1 d-block">{{add.state}},{{add.pincode}}</span>
+                                                           
+                                                            <span class="text-muted fw-normal d-block">{{add.userr.phone_number}}</span>
+                                                        </div>
+                                                    </label>
+                                                    <div class="edit-btn bg-light  rounded">
+                                                        <a href="address/addressedit/{{add.id}}/" data-bs-toggle="tooltip" data-placement="top" title="" data-bs-original-title="Edit">
+                                                            <i class="bx bx-pencil font-size-16"></i>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>{% endif %}
+                                            {% endfor %}
+                                            
+                                            <div class="col-lg-4 col-sm-6">
+                                               <a href="address"><button type="button" class="btn btn-outline-dark" data-mdb-ripple-color="dark">Add new</button></a> 
+
+                                        </div>
+                                            {% else %}
+                                            <a href="{% url 'address' %}" style="color: white; font-weight: 400; font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;"
+                                             type="button" class="btn btn-success">Add address</a>
+
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="checkout-item">
+                            <div class="avatar checkout-icon p-1">
+                                <div class="avatar-title rounded-circle bg-primary">
+                                    <i class="bx bxs-wallet-alt text-white font-size-20"></i>
+                                </div>
+                            </div>
+                            <div class="feed-item-list">
+                                <div>
+                                    <h5 class="font-size-16 mb-1">Payment Info</h5>
+                                    <p class="text-muted text-truncate mb-4">Select the payment method</p>
+                                </div>
+                                <div>
+                                    <h5 class="font-size-14 mb-3">Payment method :</h5>
+                                    <div class="row">
+                                        <div class="col-lg-3 col-sm-6">
+                                            <div data-bs-toggle="collapse">
+                                                <label class="card-radio-label">
+                                                    <input type="radio" name="pay-method" id="pay-methodoption1" class="card-radio-input" value="Card">
+                                                    <span class="card-radio py-3 text-center text-truncate">
+                                                        <i class="bx bx-credit-card d-block h2 mb-3"></i>
+                                                        Credit / Debit Card
+                                                    </span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-lg-3 col-sm-6">
+                                            <div>
+                                                <label class="card-radio-label">
+                                                    <input type="radio" name="pay-method" id="pay-methodoption2" class="card-radio-input" value="Upi">
+                                                    <span class="card-radio py-3 text-center text-truncate">
+                                                        <i class="bx bxl-paypal d-block h2 mb-3"></i>
+                                                        Upi
+                                                    </span>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-3 col-sm-6">
+                                            <div>
+                                                <label class="card-radio-label">
+                                                    <input type="radio" name="pay-method" id="pay-methodoption3" class="card-radio-input" checked="" value="Cash on Delivery">
+
+                                                    <span class="card-radio py-3 text-center text-truncate">
+                                                        <i class="bx bx-money d-block h2 mb-3"></i>
+                                                        <span>Cash on Delivery</span>
+                                                    </span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="row my-4">
+                <div class="col">
+                    <a href="ecommerce-products.html" class="btn btn-link text-muted">
+                        <i class="mdi mdi-arrow-left me-1"></i> Continue Shopping </a>
+                </div> <!-- end col -->
+                 <!-- end col -->
+            </div> <!-- end row-->
+        </div>
+        <div class="col-xl-5 m-5">
+            <div class="card checkout-order-summary">
+                <div class="card-body">
+                    <div class="p-3 bg-light mb-3">
+                        <h5 class="font-size-16 mb-0">Order Summary <span class="float-end ms-2"></span></h5>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-centered mb-0 table-nowrap">
+                            <thead>
+                                <tr>
+                                    <th class="border-top-0" style="width: 110px;" scope="col">Product</th>
+                                    <th class="border-top-0" scope="col">Quantity</th>
+                                    <th class="border-top-0" scope="col">Price</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {% for cartitem in cart_items %}
+                                <tr>
+                                    <th scope="row"><img src="{{cartitem.product.productimage_set.first.image.url}}" alt="product-img" title="product-img" class="avatar-lg rounded"></th>
+                                    <td>
+                                        <h5 class="font-size-16 text-truncate"><a href="#" class="text-dark">{{cartitem.product.product.name}}</a></h5>
+                                        <p class="text-muted mb-0">
+                                            <!-- <i class="bx bxs-star text-warning"></i>
+                                            <i class="bx bxs-star text-warning"></i>
+                                            <i class="bx bxs-star text-warning"></i>
+                                            <i class="bx bxs-star text-warning"></i>
+                                            <i class="bx bxs-star-half text-warning"></i> -->
+                                        </p>
+                                        <p class="text-muted mb-0 mt-1">{{cartitem.product.price}} x {{cartitem.quantity}}</p>
+                                    </td>
+                                  
+
+                                </tr>
+                                    <td colspan="2">
+                                        <h6 class="font-size-14 m-0">Subtotal</h6>
+                                    </td>
+                                    <td>
+                                        ₹{{subtotal}}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                                <tr>
+                                    <td colspan="2">
+                                        <h6 class="font-size-14 m-0">Shipping Charge :</h6>
+                                    </td>
+                                    <td>
+                                        ₹15
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <h6 class="font-size-14 m-0">Coupon Discount :</h6>
+                                    </td>
+                                    <td>
+                                        -₹{{dis}}
+                                    </td>
+                                </tr>                              
+                                    
+                                <tr class="bg-light">
+                                    <td colspan="2">
+                                        <h5 class="font-size-14 m-0">Total:</h5>
+                                    </td>
+                                    <td>
+                                        ₹{{total_price}}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                    </div>
+                </div>
+            </div>
+            {% if address %}
+            <div class="col">
+                <div class="text-end mt-2 mt-sm-0">
+              
+                        
+                        <button class="btn btn-success" id="rzp-button1" type="button">Place order</button> 
+                  
+                </div>
+            </div>{% else %}
+            <h6 style="color: red;">Add address to checkout</h6>
+            {% endif %}
+        </form>
+        </div>
+    </div>
+    <!-- end row -->
+    <div class="page-content page-container" id="page-content">
+        <div class="padding">
+            <div class="row container d-flex justify-content-center">
+    
+    <div class="modal fade" id="exampleModal-4" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true" style="display: none;">
+                        <div class="modal-dialog" role="document" style="width: 50%;">
+                          <div class="modal-content">
+                           
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                            </div>
+
+                        </div>
+                      </div>
+                       </div>
+                        </div>
+                      </div>
+    
+
+
+{% endblock  %}
+                            
+{% block jsss %}
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('#rzp-button1').click(function(e) {
+        e.preventDefault(); // Prevent the default form submission
+
+        // Gather form data
+        var selectedAddress = $('input[name="address"]:checked').val();
+        var selectedPaymentMethod = $('input[name="pay-method"]:checked').val();
+
+        // Send form data to the server using AJAX
+        $.ajax({
+            url: "{% url 'selectaddress' %}",
+            method: "POST",
+            data: {
+                address: selectedAddress,
+                'pay-method': selectedPaymentMethod,
+                csrfmiddlewaretoken: "{{ csrf_token }}"
+            },
+            success: function(response) {
+                // Handle the server's response if needed
+            },
+            error: function(error) {
+                // Handle errors if any
+            }
+        });
+        if (selectedPaymentMethod !== 'Upi') {
+            // Redirect to a different page for COD
+            window.location.href = '{% url 'createorders' %}';
+        }
+    });
+});
+</script>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+var options = {
+        
+    "key": "rzp_test_VPg8DhRgbpgC0R", // Enter the Key ID generated from the Dashboard
+    "amount": "{{payment.amount}}", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+    "currency": "INR",
+    "name": "Tails and co", //your business name
+    "description": "Purchases",
+    "image": "https://i.ibb.co/xHXKQyt/Screenshot-2023-07-26-144602.png",
+    "order_id": "{{payment.id}}", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+    "handler": function (response){
+
+        window.location.href = `http://127.0.0.1:8000/createorder?razorpay_payment_id=${response.razorpay_payment_id}&razorpay_order_id=${response.razorpay_order_id}`;
+  
+         
+      },
+   
+    "theme": {
+        "color": "#3399cc"
+    }
+};
+var rzp1 = new Razorpay(options);
+document.getElementById('rzp-button1').onclick = function(e){
+    rzp1.open();
+    e.preventDefault();
+}
+rzp1.on('payment.success', function(response) {
+    console.log('Payment successful:', response);
+    // Redirect to the success page
+    window.location.href = 'createorder/';
+});
+
+
+
+    <!-- Include jQuery library -->
+
+<!-- Add the following script at the end of your HTML body -->
+
+</script>
+    
+{% endblock  %}

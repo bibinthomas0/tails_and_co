@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    {% comment %} <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.5.0/css/bootstrap.min.css"> {% endcomment %}
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'css/fullprof.css' %}">
+    <title>Hello, world!</title>
+  </head>
+  <body>
+    {% block sidebar %}
+    <div class="container light-style flex-grow-1 container-p-y" >
+
+        <h4 class="font-weight-bold py-3 mb-4"> 
+          Account settings
+        </h4>
+    
+        <div class="card overflow-hidden">
+          <div class="row no-gutters row-bordered row-border-light">
+            <div class="col-md-3 pt-0">
+              <div class="list-group list-group-flush account-settings-links">
+                <a class="list-group-item list-group-item-action active" data-toggle="list" href="#account-general">Profile</a>
+                <a class="list-group-item list-group-item-action"  href="/address/{{d.id}}">Address</a>
+                <a class="list-group-item list-group-item-action" data-toggle="list" href="#account-info">change password</a>
+                <a class="list-group-item list-group-item-action" data-toggle="list" href="#account-social-links">wishlist</a>
+                <a class="list-group-item list-group-item-action" data-toggle="list" href="#account-connections">Connections</a>
+                <a class="list-group-item list-group-item-action" data-toggle="list" href="#account-notifications">Notifications</a>
+              </div>
+            </div>
+            {% endblock %}
+            {% block section %}{% endblock  %}
+            <div class="col-md-9">
+              
+              <div class="tab-content">
+                <div class="tab-pane fade active show" id="account-general">
+                  <div class="card-body media align-items-center">
+                    <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="" class="d-block ui-w-80">
+                    <div class="media-body ml-4">
+                      {% comment %} <label class="btn btn-outline-primary">
+                        Edit profile
+                        <input type="file" class="account-settings-fileinput">
+                      </label> &nbsp; {% endcomment %}
+                     
+                      <label class="btn btn-outline-primary">
+                        change
+                        <input type="file" class="account-settings-fileinput">
+                      </label> &nbsp;
+                      {% comment %} <button type="button" class="btn btn-default md-btn-flat">Reset</button> {% endcomment %}
+    
+                      {% comment %} <div class="text-light small mt-1">Allowed JPG, GIF or PNG. Max size of 800K</div> {% endcomment %}
+                    </div>
+                  </div>
+                  <hr class="border-light m-0">
+    
+                  <div class="card-body">
+                    <form method="post" action="">
+                        {% csrf_token %}
+                    <div class="form-group">
+                        
+                       
+                      <label class="form-label">Name</label>
+                      <input type="text" class="form-control mb-1" name="name" value="{{d.name}}">
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Email</label>
+                      <input type="text" class="form-control" name="email" value="{{d.email}}">
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Phone</label>
+                      <input type="text" class="form-control mb-1" name="phone" value="{{d.phone_number}}">
+          
+                     
+                    </div>
+                    
+    
+                </div>
+                
+    
+                  </div>
+                </div>
+
+        <div class="text-right mt-3">
+          <button type="submit" class="btn btn-primary">Save changes</button>&nbsp;
+          
+        </div> </form>
+      </div>
+     
+      
+    <!-- Optional JavaScript; choose one of the two! -->
+   
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.5.0/js/bootstrap.min.js"></script>
+     
+    <!-- Option 2: jQuery, Popper.js, and Bootstrap JS
+    
+    -->
+    
+    
+  </body>
+</html>

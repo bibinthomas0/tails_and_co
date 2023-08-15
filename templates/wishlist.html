@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block staticc %}
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<link rel="stylesheet" href="{% static '/css/wishlist.css' %}">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<style>
+
+	</style>
+
+
+{% endblock  %}
+{% block content %}
+
+<!------ Include the above in your HEAD tag ---------->
+<br><br>
+
+	<div class="cart-wrap">
+		<div class="container">
+	        <div class="row">
+			    <div class="col-md-12">
+			        <!-- <div class="main-heading mb-10">My wishlist</div> -->
+			        <div class="table-wishlist">
+				        <table cellpadding="0" cellspacing="0" border="0" width="100%">
+				        	<thead>
+					        	<tr>
+					        		<!-- <th width="45%">Product Name</th>
+					        		<th width="15%">Unit Price</th>
+					        		<th width="15%">Stock Status</th>
+					        		<th width="15%"></th>
+					        		<th width="10%"></th> -->
+					        	</tr>
+					        </thead>
+					        <tbody>
+					        	{% for item in wproducts %}
+								
+					        	<tr>
+					        		<td width="45%"><a href="{% url 'singproduct' id=item.product.id %}">
+					        			<div class="display-flex align-center">
+		                                    <div class="img-product">
+		                                        <img src="{{item.product.productimage_set.first.image.url}}" alt="" class="mCS_img_loaded">
+		                                    </div></a>
+		                                    <div class="name-product">
+		                                        {{item.product.product.name}}
+		                                    </div>
+	                                </td>
+					        		<td width="15%" class="price">₹{{item.product.price}}</td>
+									{% if item.product.stock %}
+					        		<td width="15%"><span class="in-stock-box">In Stock</span></td>
+					        		<td width="15%"><button class="addToCartBtn  round-black-btn small-btn" id="addToCartBtn" data-product-id="{{ item.product.id }}">Add to Cart</button> </td>
+					        		<td width="10%" class="text-center"><a href="{% url 'deletewishlist' id=item.id %}" class="trash-icon"><i class="far fa-trash-alt"></i></a></td>
+									{% else %}
+									<td width="15%"><span class="in-stock-box">Out of Stock</span></td>
+					        		<td width="15%"></td>
+					        		<td width="10%" class="text-center"><a href="{% url 'deletewishlist' id=item.id %}" class="trash-icon"><i class="far fa-trash-alt"></i></a></td>
+									{% endif %}
+					        	</tr>
+					        	{% endfor %}
+				        	</tbody>
+				        </table>
+				    </div>
+			    </div>
+			</div>
+		</div>
+	</div>
+	
+<br><br>
+<!-- 
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <p>Item has been added to your cart.</p>
+    </div>
+</div> -->
+<div id="myModal" class="modal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<h5 class="modal-title" id="exampleModalLabel">Hurray!!!</h5>
+			<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">x</button>
+		  </div>
+		  <div class="modal-body" style="color: green; font-weight: 200;">
+			Item added to cart
+		  </div>
+		 
+		</div>
+	  </div>
+</div>
+
+{% block jsss %}
+
+<script src="{% static '/js/cartadd.js' %}"></script>
+
+
+
+{% endblock  %}
+{% endblock  %}

@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+
+<br><br>
+    <div class="card">
+        <div class="row g-0">
+           
+            <div class="col-md-6 border-end d-flex flex-column justify-content-center">
+                
+                <div class="main_image">
+                    <img src="{{ k.first.image.url }}" id="main_product_image" width="350">
+                </div>
+                <div class="thumbnail_images">
+                    
+                    <ul id="thumbnail" class="list-inline">
+                       {% for image in k %}
+                        <li class="list-inline-item"><img onclick="changeImage(this)" src="{{image.image.url}}" width="70"></li>{% endfor %}
+                
+                        </ul>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="p-3 right-side">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h3>{{data.product.name}}</h3>
+                        <span class="heart"><i class='bx bx-heart'></i></span>
+                    </div>
+                    <div class="mt-2 pr-3 content">
+                        <p>{{data.description}}</p>
+                    </div>
+                    <h3>₹{{data.price}}</h3>
+                    
+                        <span>stock available:{{data.stock}}</span><br>
+                        <span>Gender:{{data.gender}}</span>
+                    </div>
+                    
+                    <div class="mt-5">
+                        
+                        <span class="fw-bold">Color:{{data.color}}</span>
+                        <div class="mt-5">
+                            <span class="fw-bold">Colors available:</span>
+                           
+                                    
+                                    {% for image in pcolor %}
+                                    <div class="list-inline-item " >
+                                        <button type="button" onclick="redirectToColorChange({{ image.id }})" class="btn btn-color"  style="border-color: black; background-color: {{image.color}}; opacity: 50%;"></button>
+                                    </div>
+                                   
+                                    {% endfor %}
+                            
+                        </div>
+                    </div>
+                    
+                    {% if data.stock > 0 %}
+                    <a href="{% url 'addwishlist' id=data.id %}"><div class="buttons d-flex flex-row mt-5 gap-3">
+                        <button class="btn btn-outline-dark">Add to wishlist</button></a> 
+                       <button class="addToCartBtn btn btn-dark" data-product-id="{{ data.id }}" id="addToCartBtn">Add to Basket</button>
+                    </div>
+                    {% else %}
+                 
+                    <a href="{% url 'addwishlist' id=data.id %}"><div class="buttons d-flex flex-row mt-5 gap-3">
+                        <button class="btn btn-outline-dark">Add to wishlist</button></a> 
+                    {% comment %} <h4 style="color: red; margin-left: 10px;">Out of stock</h4> {% endcomment %}
+                    <div class="container ">
+                        <div class="eo2-sold-out js-sold-out-btn"><img src="{% static 'img/soldout.png' %}"></div>
+                    <br>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+<div id="myModal" class="modal bd-example-modal-lg">
+	<div class="modal-dialog">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<h5 class="modal-title" id="exampleModalLabel">Hurray!!!</h5>
+			<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">x</button>
+		  </div>
+		  <div class="modal-body" style="color: green; font-weight: 200;">
+			Item added to cart
+		  </div>
+		 
+		</div>
+	  </div>
+</div>
+
+{% endblock  %}
+{% block jsss %}
+<script>
+    function redirectToColorChange(imageId) {
+        // Use JavaScript to redirect to the specified URL using the imageId
+        const url = `{% url 'changecolor' id=0 %}`.replace('0', imageId);
+        window.location.href = url;
+    }
+</script>
+<script src="{% static '/js/cartadd.js' %}"></script>
+
+{% endblock  %}

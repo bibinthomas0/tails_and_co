@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <title>Hello, world!</title>
+  </head>
+  <body>
+    <style>
+        body {
+    background-position: center;
+    background-color: #eee;
+    background-repeat: no-repeat;
+    background-size: cover;
+    color: #505050;
+    font-family: "Rubik",Helvetica,Arial,sans-serif;
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 1.5;
+    text-transform: none;
+    }
+    
+    .forgot{
+    background-color: #fff;
+    padding: 12px;
+    border: 1px solid #dfdfdf;
+    }
+    
+    .padding-bottom-3x {
+    padding-bottom: 72px !important;
+    }
+    
+    .card-footer{
+    background-color: #fff;
+    }
+    
+    .btn{ 
+    
+    font-size: 13px;
+    }
+    
+    .form-control:focus {
+    color: #495057;
+    background-color: #fff;
+    border-color: #76b7e9;
+    outline: 0;
+    box-shadow: 0 0 0 0px #28a745;
+    }</style>
+    <div class="container padding-bottom-3x mb-2 mt-5">
+        <div class="row justify-content-center">
+          <div class="col-lg-8 col-md-10">
+            <div class="forgot">
+                
+                <h2>Forgot your password?</h2>
+            <p>Change your password in three easy steps. This will help you to secure your password!</p>
+            <ol class="list-unstyled">
+              <li><span class="text-primary text-medium">1. </span>Enter your email address below.</li>
+              <li><span class="text-primary text-medium">2. </span>Our system will send you a temporary otp</li>
+              <li><span class="text-primary text-medium">3. </span>Use the otp to reset your password</li>
+            </ol>
+    
+            </div>	
+            {% if messages %}
+                  
+                        {% for message in messages %}
+                            {% if '2' in message.message %}
+                                <p class="error" style="color: red;">{{ message.message|cut:"(2)" }}</p>
+                            {% else %}
+                            {% endif %}
+                        {% endfor %}
+                  
+                {% endif %}
+            <form class="card mt-4" method="post" action="">
+                {% csrf_token %}
+              <div class="card-body">
+                <div class="form-group">
+                  <label for="email-for-pass">Enter your email address</label>
+                  <input class="form-control" type="text" id="email-for-pass" required="" name="email"><small class="form-text text-muted">Enter the email address you used during the registration on Tails and co. Then we'll email a otp to this address.</small>
+                </div>
+              </div>
+              <div class="card-footer">
+                <button class="btn btn-success" type="submit">Get New Password</button>
+                <button class="btn btn-danger"  type="submit">Back to Login</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  </body>
+</html>
+

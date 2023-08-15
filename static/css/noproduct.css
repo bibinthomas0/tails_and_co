@@ -1,0 +1,46 @@
+@keyframes eo2-sold-out-swing {
+    0% {
+        transform: rotate(3deg)
+    }
+
+    50% {
+        transform: rotate(-3deg)
+    }
+
+    100% {
+        transform: rotate(3deg)
+    }
+}
+
+.eo2-sold-out {
+    position: absolute;
+    top: 330px;
+    left: 160px;
+    width: 115px;
+    height: 115px;
+    z-index: 1;
+    cursor: pointer;
+    animation: eo2-sold-out-swing 2s ease-in-out forwards infinite;
+    transform-origin: 50% 0;
+    transition: top 150ms ease-in-out, opacity 150ms ease-in-out
+}
+
+.eo2-sold-out:hover {
+    opacity: .8
+}
+
+
+
+
+
+
+
+
+
+.main-header nav li {
+  display: inline-block;
+  padding: 0 2rem;
+  border-left: .1rem solid #fff;
+  background: #00AD7C;
+}
+

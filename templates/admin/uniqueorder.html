@@ -1,0 +1,298 @@
+{% extends 'admin/index.html' %}
+{% load static %}
+
+
+{% block content %}
+
+<script>
+ 
+    
+    $(document).ready(function() {
+        $('#myModal').on('show.bs.modal', function(e) {
+            console.log(e);  // Log the event object
+            var orderStatus = $(e.relatedTarget).data('status');
+            console.log(orderStatus);
+            $(this).find('.modal-body p').html("Order Status: " + orderStatus);
+        });
+    });  
+</script>
+
+
+
+
+
+<div class="container-fluid">
+
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-center py-3">
+        <h2 class="h5 mb-0"><a href="#" class="text-muted"></a> Order #16123222</h2>
+      </div>
+      <div class="row">
+        <div class="col-lg-8">
+          <div class="card mb-1">
+            <div class="card-body">
+              <div class="mb-3 d-flex justify-content-between">
+                <div>
+                  <span class="me-3"></span>
+                  
+                </div>
+                <div class="d-flex">
+                  <button class="btn btn-link p-0 me-3 d-none d-lg-block btn-icon-text"><i class="bi bi-download"></i> <span class="text">Invoice</span></button>
+                  <div class="dropdown">
+                    <button class="btn btn-link p-0 text-muted" type="button" data-bs-toggle="dropdown">
+                      <i class="bi bi-three-dots-vertical"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                      <li><a class="dropdown-item" href="#"><i class="bi bi-pencil"></i> Edit</a></li>
+                      <li><a class="dropdown-item" href="#"><i class="bi bi-printer"></i> Print</a></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <table class="table table-borderless">
+                <tbody>
+                    {% for item in order_items %}
+                  <tr>
+                    <td>
+                      <div class="d-flex mb-2">
+                        <div class="flex-shrink-0">
+                          <img src="{{item.product.productimage_set.first.image.url}}" alt="" width="35" class="img-fluid">
+                        </div>
+                        <div class="flex-lg-grow-1 ms-3">
+                          <h6 class="small mb-0"><a href="#" class="text-reset">{{item.product.product.name}}</a></h6>
+                          <span class="small">Color: {{item.product.color}}</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                        {% if ord.status == 'C' %}
+                                <td><span class="badge badge-danger">{{item.get_status_display}}</span></td>
+                                {% elif item.status == 'P' %}
+                                <td><span class="badge badge-info">{{item.get_status_display}}</span></td>
+                                {% elif item.status == 'S' %}
+                                <td><span class="badge badge-primary">{{item.get_status_display}}</span></td>
+                                {% elif item.status == 'O' %}
+                                <td><span class="badge badge-warning">{{item.get_status_display}}</span></td>
+                                {% elif item.status == 'D' %}
+                                <td><span class="badge badge-success">{{item.get_status_display}}</span></td>
+                                {% else %}
+                                <td>{{item.get_status_display}}</td>
+                                {% endif %}
+                    </td>
+                    
+                    <td>{{item.quantity}}</td>
+                    <td>  <span class="badge badge-success" style="cursor: pointer;" data-toggle="modal" data-target="#modal{{ item.id }}">
+                        update status
+                    </span><span class="badge badge-danger ml-2" style="cursor: pointer;" data-toggle="modal" data-target="#modalConfirmDelete{{ item.id }}">cancel</span>
+                        </td>
+                    <div class="modal fade" id="modal{{ item.id }}">
+                        <div class="modal-dialog" role="document">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                              <h4 class="modal-title">Update Order status {{item.id}}</h4>
+                            </div>
+                            <div class="modal-body">
+                      
+                                <div class="control-group">
+                                    <form action="{% url 'update_order_status' id=item.id %}" method="post">
+                                        {% csrf_token %}
+                                  <label for="select2-multiple" class="control-label">Select</label>
+                                  <select id="select2-multiple" class="form-control select2-single"  name="status">
+                                    <option value="{{ item.status }}">{{item.get_status_display}}</option>
+                                      <option value="S">Shipped</option>
+                                      <option value="O">Out for delivery</option>
+                                      <option value="D">Delivered</option>
+                                  </select>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                              <button type="submit" class="btn btn-primary">Save changes</button></form>
+                            </div>
+                          </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                      </div><!-- /.modal -->
+
+                <div class="modal fade" id="modalConfirmDelete{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+          aria-hidden="true">
+          <div class="modal-dialog modal-sm modal-notify modal-danger" role="document">
+            <!--Content-->
+            <div class="modal-content text-center">
+              <!--Header-->
+              <div class="modal-header d-flex justify-content-center">
+                <p class="heading">Order cancelling?Are you sure? {{item.id}}</p>
+              </div>
+        
+              <!--Body-->
+              <div class="modal-body">
+        
+                <i class="fas fa-times fa-4x animated rotateIn"></i>
+        
+              </div>
+        
+              <!--Footer-->
+              <div class="modal-footer flex-center">
+                <a href="{% url 'order_cancel' id=item.id %}" class="btn  btn-outline-danger">Yes</a>
+                <a type="button" class="btn  btn-danger waves-effect" data-dismiss="modal">No</a>
+              </div>
+            </div>
+            <!--/.Content-->
+          </div>
+        </div>
+
+                    <td class="text-end">₹{{item.product.price}}</td>
+                  </tr>{% endfor %}
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <td colspan="2">Subtotal</td>
+                    <td class="text-end">₹{{sub_price}}</td>
+                  </tr>
+                  <tr>
+                    <td colspan="2">Shipping</td>
+                    <td class="text-end">₹15.00</td>
+                  </tr>
+                  <tr>
+                    <td colspan="2">Discount (Code: {{order.coupon_applied.code}})</td>
+                    <td class="text-danger text-end">-₹{{order.coupon_applied.discount}}</td>
+                  </tr>
+                  <tr class="fw-bold">
+                    <td colspan="2">TOTAL</td>
+                    <td class="text-end">{{order.total_price}}</td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+          <!-- Payment -->
+          <div class="card mb-4">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-lg-6">
+                  <h3 class="h6">Payment Method</h3>
+                  <p><br>
+                  Total: ₹{{order.total_price}} <span class="badge bg-success rounded-pill">{{order.payment_method}}</span></p>
+                </div>
+                <div class="col-lg-6">
+                  <h3 class="h6">Billing address</h3>
+                  <address>
+                    <strong>{{address.custom_name}}</strong><br>
+                    {{address.landmark}}<br>
+                    {{address.city}}, {{address.pincode}}<br>
+                    Phone:<abbr> {{order.user.phone_number}}</abbr >
+                  </address>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <!-- Customer Notes -->
+          {% comment %} <div class="card mb-4">
+            <div class="card-body">
+              <h3 class="h6">Customer Notes</h3>
+              <p>Sed enim, faucibus litora velit vestibulum habitasse. Cras lobortis cum sem aliquet mauris rutrum. Sollicitudin. Morbi, sem tellus vestibulum porttitor.</p>
+            </div>
+          </div> {% endcomment %}
+          <div class="card mb-4">
+            <!-- Shipping information -->
+            <div class="card-body">
+              {% comment %} <h3 class="h6">Shipping Information</h3>
+              <strong>FedEx</strong>
+              <span><a href="#" class="text-decoration-underline" target="_blank">FF1234567890</a> <i class="bi bi-box-arrow-up-right"></i> </span>
+              <hr> {% endcomment %}
+              
+              <h3 class="h6">Address</h3>
+              <address>
+                <strong>{{address.custom_name}}</strong><br>
+                {{address.landmark}}<br>
+                {{address.city}}, {{address.pincode}}<br>
+                Phone:<abbr> {{order.user.phone_number}}</abbr >
+              </address>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+      </div>
+
+
+      <div class="modal fade" id="myModal">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+          
+            {% if 'P' %}
+                    <div class=" hh-grayBox pt45 pb20">
+                        <div class="row justify-content-between">
+                            <div class="order-tracking completed">
+                                <span class="is-complete"></span>
+                                <p>Processing<br></p>
+                            </div>
+                            <div class="order-tracking ">
+                                <span class="is-complete"></span>
+                                <p>Shipped<br></p>
+                            </div>
+                            <div class="order-tracking">
+                            <span class="is-complete"></span>
+                            <p>Out for delivery<br></p>
+                        </div>
+                        
+
+                        </div>
+                    </div>
+                    {% elif 'S' %}
+                    <div class=" hh-grayBox pt45 pb20">
+                        <div class="row justify-content-between">
+                            <div class="order-tracking completed">
+                                <span class="is-complete"></span>
+                                <p>Processing<br></p>
+                            </div>
+                            <div class="order-tracking completed">
+                                <span class="is-complete"></span>
+                                <p>Shipped<br></p>
+                            </div>
+                            <div class="order-tracking">
+                            <span class="is-complete"></span>
+                            <p>Out for delivery<br></p>
+                        </div>
+                        
+
+                        </div>
+                    </div>
+                    {% elif 'O' %}
+                    <div class=" hh-grayBox pt45 pb20">
+                        <div class="row justify-content-between">
+                            <div class="order-tracking completed">
+                                <span class="is-complete"></span>
+                                <p>Processing<br></p>
+                            </div>
+                            <div class="order-tracking completed">
+                                <span class="is-complete "></span>
+                                <p>Shipped<br></p>
+                            </div>
+                            <div class="order-tracking completed">
+                            <span class="is-complete "></span>
+                            <p>Out for delivery<br></p>
+                        </div>
+                        
+
+                        </div>
+                    </div>{% endif %}
+                                
+        </div>
+      </div>
+      </div>
+
+
+
+
+
+
+{% endblock  %}
+{% block script %}
+
+
+{% endblock  %}

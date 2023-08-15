@@ -1,0 +1,104 @@
+{% extends 'admin/index.html' %}
+{% block content %}<div class="container mt-5">
+
+    <table class="table table-borderless table-responsive card-1 p-4">
+<thead>
+<tr class="border-bottom">
+<th>
+  <span class="ml-2">Login Time</span>
+</th>
+<th>
+  <span class="ml-2">User</span>
+</th>
+<th>
+  <span class="ml-2">Phone Number</span>
+</th>
+<th>
+  <span class="ml-2">Activity Status</span>
+</th>
+<th>
+  <span class="ml-4">Action</span>
+</th>
+</tr>
+</thead>
+<tbody>
+
+{% for d in data %}
+<tr class="border-bottom">
+<td>
+  <div class="p-2">
+      <span class="d-block font-weight-bold">{{d.last_login}}</span>
+      
+  </div>
+</td>
+<td>
+   <div class="p-2 d-flex flex-row align-items-center mb-2">
+      {% comment %} <img src="https://i.imgur.com/hczKIze.jpg" width="40" class="rounded-circle"> {% endcomment %}
+      <div class="d-flex flex-column ml-2">
+          <span class="d-block font-weight-bold">{{d.name}}</span>
+          <small class="text-muted">{{d.email}}</small>
+      </div>
+  </div>
+
+</td>
+<td>
+  <div class="p-2">
+      <span class="font-weight-bold">{{d.phone_number}}</span>
+  </div>
+</td>
+<td>
+  <div class="p-2 d-flex flex-column">
+      <span>{{d.is_active}}</span>
+     
+  </div>
+</td>
+<td>
+    <div class="p-2">
+        <label class="switch">
+            <input type="checkbox" {% if user.is_active %}checked{% endif %} data-user-id="{{ d.id }}" class="block-unblock-checkbox">
+            <span class="slider"></span>
+        </label>
+    </div>
+    
+</td>
+</tr>
+
+{% endfor %}
+
+</tbody>
+</table>
+
+ 
+</div>{% endblock  %}
+{% block script %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    jQuery(document).ready(function () {
+        jQuery(".block-unblock-checkbox").on("change", function () {
+            const userId = $(this).data("user-id");
+            const isActive = $(this).prop("checked");
+
+            jQuery.ajax({
+                url: `/block/${userId}/`,
+                method: "POST",
+                data: {
+                    is_Active: isActive ? 'true' : 'false',
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                },
+                dataType: "json",
+                success: function (data) {
+                    if (data.is_active) {
+                        $(`.block-unblock-checkbox[data-user-id='${userId}']`).addClass('active');
+                    } else {
+                        $(`.block-unblock-checkbox[data-user-id='${userId}']`).removeClass('active');
+                    }
+                },
+                error: function () {
+                    // Handle error, if needed
+                }
+            });
+        });
+    });
+</script>
+{% endblock  %}
+{% block js %}{% endblock  %}
