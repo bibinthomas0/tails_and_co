@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'owner',
     'colorfield',
     'cart',
+    'sending_email_app',
 ]
 
 MIDDLEWARE = [
@@ -155,3 +156,23 @@ TWILIO_AUTH_TOKEN = os.environ.get('TWILIO_AUTH_TOKEN')
 
 KEY=os.environ.get('KEY')
 SECRET=os.environ.get('SECRET')
+
+
+CELERY_BROKER_URL = 'amqp://guest@localhost:5672//'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Asia/Kolkata'
+
+
+EMAIL_BACKEND ='django.core.mail.backends.smtp.EmailBackend'
+#add your host of the email here in this case its Gmail so we are going to use Gmail host
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+#add the port number of the email server
+EMAIL_PORT = 587
+#add your gamil here
+EMAIL_HOST_USER = 'tailsandcorp@gmail.com'
+#add your password here
+EMAIL_HOST_PASSWORD = 'jgnwxvydsniaqzjf'
+DEFAULT_FROM_EMAIL='Celery <naincygupta100@gmail.com>'

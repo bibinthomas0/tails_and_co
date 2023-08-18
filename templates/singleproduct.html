@@ -31,8 +31,8 @@
                         <p>{{data.description}}</p>
                     </div>
                     <h3>₹{{data.price}}</h3>
-                    
-                        <span>stock available:{{data.stock}}</span><br>
+                    {% if data.stock < 6 %} <span style="color: orangered;">Only {{data.stock}} more units left</span> {% else %}
+                        <span>stock available:{{data.stock}}</span>{% endif %}<br>
                         <span>Gender:{{data.gender}}</span>
                     </div>
                     
@@ -54,6 +54,7 @@
                     </div>
                     
                     {% if data.stock > 0 %}
+                    
                     <a href="{% url 'addwishlist' id=data.id %}"><div class="buttons d-flex flex-row mt-5 gap-3">
                         <button class="btn btn-outline-dark">Add to wishlist</button></a> 
                        <button class="addToCartBtn btn btn-dark" data-product-id="{{ data.id }}" id="addToCartBtn">Add to Basket</button>
@@ -63,8 +64,8 @@
                     <a href="{% url 'addwishlist' id=data.id %}"><div class="buttons d-flex flex-row mt-5 gap-3">
                         <button class="btn btn-outline-dark">Add to wishlist</button></a> 
                     {% comment %} <h4 style="color: red; margin-left: 10px;">Out of stock</h4> {% endcomment %}
-                    <div class="container ">
-                        <div class="eo2-sold-out js-sold-out-btn"><img src="{% static 'img/soldout.png' %}"></div>
+                    <div class=" ">
+                        <div class="" style="color: orangered;">sold out</div>
                     <br>
                     {% endif %}
 

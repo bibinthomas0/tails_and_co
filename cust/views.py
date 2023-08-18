@@ -14,7 +14,7 @@ from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_control
 from django.contrib.auth.hashers import make_password
-from cart.models import Cart, CartItem, Order, OrderItem, Wishlist
+from cart.models import Cart, CartItem, Order, OrderItem, Wishlist,Wallet,Wallethistory
 
 
 # Create your views here.
@@ -107,7 +107,11 @@ def Profilepage(request):
     cart_items = CartItem.objects.filter(cart=cart)
     numitems = cart_items.count()
     d = request.user
-    context = {"d": d, "numitems": numitems}
+    try:
+        wallet=Wallet.objects.get(user=d)
+    except:
+        wallet=Wallet.objects.create(user=d)
+    context = {"d": d, "numitems": numitems,'wallet':wallet}
     return render(request, "user/profile.html", context)
 
 
@@ -296,17 +300,27 @@ def singproduct(request, id):
     da = Product.objects.get(productcolor=data)
     pcolor = productcolor.objects.filter(product=da)
     k = ProductImage.objects.filter(color=data)
-    context = {
-        "data": data,
-        "k": k,
-        "pcolor": pcolor,
-    }
+    try:
+        w=Wishlist.objects.get(product=data)
+        context = {
+            "data": data,
+            "k": k,
+            "pcolor": pcolor,
+            'w':w
+        }
+    except:
+        context = {
+            "data": data,
+            "k": k,
+            "pcolor": pcolor,
+        }
+        
     return render(request, "singleproduct.html", context)
 
 
 def userorders(request):
     cust = get_object_or_404(CustomUser, id=request.user.id)
-    orders = Order.objects.filter(user=cust)
+    orders = Order.objects.filter(user=cust).order_by('-created_at')
     # car = get_object_or_404(Cart, user=request.user)
     # cart_items = CartItem.objects.filter(cart=car)
     # for order in orders:
@@ -387,3 +401,12 @@ def userorder_cancel(request,id):
     edit.save()
     id = edit.order.id
     return redirect('order_deatails',id)
+def searchproduct(request):
+    name=request.GET.get('name')
+    products=[]
+    if name:
+        pro=Product.objects.get(name__icontains=name)
+        products=productcolor.objects.filter(product=pro)
+    context={'name':name,'products':products}
+    return render(request,'search.html',context)
+            

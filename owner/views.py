@@ -1,5 +1,6 @@
 from django.shortcuts import render
 import random
+import json
 from django.core.paginator import Paginator, Page
 from decimal import Decimal
 from datetime import datetime
@@ -14,11 +15,38 @@ from cust.models import CustomUser, CustomUserManager, Userdetails
 from django.shortcuts import redirect, render, HttpResponse, get_object_or_404
 from .models import Product, Subcategory, Category, ProductImage, productcolor
 from cart.models import Cart, CartItem, Order, OrderItem, Coupon
-
+from sending_email_app.tasks import send_mail_func,send_mail_order,send_mail_orderstatus
+from datetime import date,timedelta
+from datetime import datetime, timedelta, timezone
 
 # Create your views here.
 def AdminDashboard(request):
-    return render(request, "admin/index.html")
+    if request.method=='POST':
+        from_date_str=request.POST.get('from')
+        To_date_str=request.POST.get('to')
+        from_date = datetime.strptime(from_date_str, "%m/%d/%Y").strftime(
+            "%Y-%m-%d %H:%M:%S"
+        )
+        to_date = datetime.strptime(To_date_str, "%m/%d/%Y").strftime(
+            "%Y-%m-%d %H:%M:%S"
+        )
+    else:  # Make sure to handle the else case to avoid the 'date' variable issue
+        from_date = None
+        to_date = None
+    week_date = datetime.now(timezone.utc) - timedelta(days=7)  # Use timezone.now() for Django's timezone-aware datetime
+    month_date = datetime.now(timezone.utc) - timedelta(days=30)
+    end_date = datetime.now(timezone.utc)
+    weekly = Order.objects.filter(created_at__range=(week_date, end_date))
+    monthly = Order.objects.filter(created_at__range=(month_date, end_date))
+    total_week_amount=0
+    total_month_amount=0
+    for dates in weekly:
+        total_week_amount+=dates.total_price
+    for dates in monthly:
+        total_month_amount+=dates.total_price
+    context={'weekly':weekly,'monthly':monthly,'total_week_amount':total_week_amount,'total_month_amount':total_month_amount}
+    
+    return render(request, "admin/dashboard.html",context)
 
 
 def Adminusers(request):
@@ -174,6 +202,7 @@ def Adminotppage(request):
         user_otp = request.POST.get("otp")
         stored_otp = request.session.get("otp")
         email = request.session.get("gmail")
+        print(user_otp,stored_otp)
         if user_otp == stored_otp:
             edit = CustomUser.objects.get(email=email)
             edit.is_verified = True
@@ -258,7 +287,19 @@ def update_order_status(request, id):
         edit.status = st
         edit.save()
         id = edit.order.id
-        return redirect("adminorder_deatails", id)
+        email=edit.order.user.email
+        print(email)
+        print(edit.order.address.custom_name)
+        try:
+            if st=='S': 
+                message=f"Good news! {edit.order.address.custom_name}, Your order {edit.product.product.name} has shipped. We will reach you soon✓"
+            elif st=='O':
+                message=f"Hey {edit.order.address.custom_name}, Your order {edit.product.product.name} has been reached the hub nearest to you, Our delivery partner will reach you as soon as possible "
+            elif st=='D':
+                message=f"{edit.order.address.custom_name}, Your order {edit.product.product.name} has been succesfully delivered"
+            send_mail_orderstatus(request,message,email)
+        finally:
+            return redirect("adminorder_deatails", id)
 
 
 def variantedit(request, id):
@@ -343,3 +384,41 @@ def order_cancel(request, id):
     edit.save()
     id = edit.order.id
     return redirect("adminorder_deatails", id)
+def deleteimage(request,id):
+    img=ProductImage.objects.get(id=id)
+    img.delete()
+    id=img.color.id
+    return redirect('imagess',id)
+from django.views.decorators.csrf import csrf_exempt
+
+def croper(request):
+    return render(request,'admin/imagecrop.html')
+
+
+
+
+@csrf_exempt
+def cropimage(request):
+    print('aaaaaaaaaaaaaaaa')
+    if request.method == 'POST':
+        print('ddddddddddddddd')
+        try:
+            data = json.loads(request.body)
+            image_data = data.get('image_data')
+            print('hhhhhhh')
+            # Here, you can process the image_data as needed, such as saving it to a model or file
+            # Example: Save the cropped image to a model
+            # YourModel.objects.create(image_field=image_data)
+            
+            # Return a response indicating success
+            return JsonResponse({'message': 'Image cropped and saved successfully.'})
+        
+        except Exception as e:
+            print('kkkkkkkkkkkkkkkk')
+            return JsonResponse({'error': str(e)}, status=500)
+    
+def deactivatecoupon(request,id):
+    coup=Coupon.objects.get(id=id)
+    coup.active=False
+    coup.save()
+    return redirect('admincoupon')

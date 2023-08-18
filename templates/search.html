@@ -1,2 +1,55 @@
 {% extends 'base.html' %}
-{% block contens %}{% endblock  %}
+{% load static %}
+{% block staticc %}
+<link href="{% static '/css/csst/bootstrap.min.css' %}" rel="stylesheet">
+
+<link href="{% static 'css/csst/bootstrap-icons.css' %}" rel="stylesheet">
+
+<link href="{% static 'css/csst/templatemo-topic-listing.css' %}" rel="stylesheet">
+
+
+{% endblock  %}
+{% block content %}
+
+
+search results for '{{name}}'
+<br><br><br>
+<div class="container">
+    <div class="row">
+
+        <div class="col-12">
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="design-tab-pane" role="tabpanel" aria-labelledby="design-tab" tabindex="0">
+                    <div class="row">
+                        
+                        {% for d  in products %}
+                        {% if d.productimage_set.first %}
+                        <div class="col-lg-3 col-md-4 col-12 mb-2 mb-lg-0">
+                            <div class="custom-block bg-white shadow-lg">
+                                
+                                <a href="{% url 'singproduct' id=d.id %}">
+                                    <div class="d-flex">
+                                        <div>
+                                            <h5 class="mb-2">{{d.product.name}}</h5>
+
+                                            {% comment %} <p class="mb-0">{{d.productcolor_set.first.description}}</p> {% endcomment %}
+                                        </div>
+
+                                        <span class="badge bg-design rounded-pill bg-black ms-auto">{{d.stock}}</span>
+                                    </div>
+                                    {% with image=d.productimage_set.first %}
+                                    {% if image %}
+                                    <img src="{{ image.image.url }}" class="custom-block-image img-fluid" alt="">
+                                    {% endif %}
+                                    {% endwith %}
+                                </a>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                       
+
+                       
+</div>
+<br><br><br>
+{% endblock  %}

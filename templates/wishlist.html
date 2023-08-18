@@ -53,7 +53,7 @@
 					        		<td width="10%" class="text-center"><a href="{% url 'deletewishlist' id=item.id %}" class="trash-icon"><i class="far fa-trash-alt"></i></a></td>
 									{% else %}
 									<td width="15%"><span class="in-stock-box">Out of Stock</span></td>
-					        		<td width="15%"></td>
+					        		<td width="15%"><button class="addToCartBtn  round-black-btn small-btn"  >Notify me</button> </td>
 					        		<td width="10%" class="text-center"><a href="{% url 'deletewishlist' id=item.id %}" class="trash-icon"><i class="far fa-trash-alt"></i></a></td>
 									{% endif %}
 					        	</tr>

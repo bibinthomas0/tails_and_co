@@ -11,12 +11,11 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"> 
     <link rel="apple-touch-icon" href="{% static 'img/apple-icon.png' %}">
     <link rel="shortcut icon" type="image/x-icon" href="{% static '/img/favicon.ico' %}">
-    
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/templatemo.css' %}">
     <link rel="stylesheet" href="{% static '/css/custom.css' %}">
     <link rel="stylesheet" href="{% static '/css/noproduct.css' %}">
-
+    <link rel="stylesheet" href="{% static '/css/pageloader.css' %}">
     <link rel="stylesheet" href="{% static '/css/fontawesome.css' %}">
     <link rel="stylesheet" href="{% static '/css/slick-theme.css' %}">
     <link rel="stylesheet" href="{% static '/css/slick-theme.min.css' %}">
@@ -32,7 +31,7 @@
     <link rel="stylesheet" href="{% static 'css/productprofile.css' %}">
     {% block t %}<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>{% endblock  %}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
-    <link rel="stylesheet" href="{% static '/css/wishlistmodal.css' %}">
+
     <!-- 
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
@@ -113,9 +112,11 @@
                         
                 </div>
                 <div class="navbar align-self-center d-flex">
+                    
                     <div class="d-lg-none flex-sm-fill mt-3 mb-4 col-7 col-sm-auto pr-3">
+                        
                         <div class="input-group">
-                            <input type="text" class="form-control" id="inputMobileSearch" placeholder="Search ...">
+                            <input type="text" class="form-control" id="inputMobileSearch" name="name" placeholder="Search ...">
                             <div class="input-group-text">
                                 <i class="fa fa-fw fa-search"></i>
                             </div>
@@ -132,11 +133,16 @@
                         <img src="{% static '/img/favicn.ico' %}" alt="">
                         <span class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark">0</span>
                     </a>
+                    <a class="nav-icon position-relative text-decoration-none" href="">
+                        <i class="ti ti-bell-ringing text-dark mr-1"></i>
+                        <div class="notification bg-primary rounded-circle"></div>
+                      </a>
                     <a class="nav-icon position-relative text-decoration-none" href="{% url 'cartdetail' %}">
                         <i class="fa fa-fw fa-cart-arrow-down text-dark mr-1"></i>
                         <span class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark">{{numitems}}</span>
                     </a>
                     
+                   
                
            
                 </div>
@@ -145,7 +151,7 @@
         </div>
     </nav>
     {% endblock  %}
-    {% block content %}
+    
     <!-- Modal -->
     
      <div class="modal fade bg-white" id="templatemo_search" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -153,9 +159,9 @@
             <div class="w-100 pt-1 mb-5 text-right">
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="" method="get" class="modal-content modal-body border-0 p-0">
+            <form action="{% url 'searchproduct' %}" method="get" class="modal-content modal-body border-0 p-0">
                 <div class="input-group mb-2">
-                    <input type="text" class="form-control" id="inputModalSearch" name="q" placeholder="Search ...">
+                    <input type="text" class="form-control" id="inputModalSearch" name="name" placeholder="Search ...">
                     <button type="submit" class="input-group-text bg-success text-light">
                         <i class="fa fa-fw fa-search text-white"></i>
                     </button>
@@ -164,7 +170,7 @@
         </div>
     </div>
 
-
+    {% block content %}
 
     <!-- Start Banner Hero -->
     <div id="template-mo-zay-hero-carousel" class="carousel slide" data-bs-ride="carousel">

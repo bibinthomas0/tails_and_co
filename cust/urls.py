@@ -27,4 +27,5 @@ urlpatterns = [
     path('singproduct/cartaddjs/<int:id>/', views.cartaddjs, name='cartaddjs'),
     path('order_deatails/<int:id>/',views.order_deatails,name='order_deatails'),
     path('userorder_cancel/<int:id>/', views.userorder_cancel, name='userorder_cancel'),
+    path('searchproduct/', views.searchproduct, name='searchproduct'),
 ]

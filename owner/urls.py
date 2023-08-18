@@ -26,4 +26,8 @@ path('adminlogout',views.adminlogout,name='adminlogout'),
 path('admincoupon', views.Admincoupon, name='admincoupon'),
 path('adminorder_deatails/<int:id>/', views.adminorder_deatails, name='adminorder_deatails'),
 path('order_cancel/<int:id>/', views.order_cancel, name='order_cancel'),
+path('deleteimage/<int:id>/', views.deleteimage, name='deleteimage'),
+path('cropimage', views.cropimage, name='cropimage'),
+path('croper', views.croper, name='croper'),
+path('deactivatecoupon/<int:id>/', views.deactivatecoupon, name='deactivatecoupon'),
 ]

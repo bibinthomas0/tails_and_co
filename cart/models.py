@@ -102,3 +102,16 @@ class Wishlist(models.Model):
         
 #     def __str__(self):
 #         return f"{self.product.name} - {self.quantity}"
+class Wallet(models.Model):
+    coins=models.PositiveIntegerField(default=0)
+    user=models.ForeignKey(CustomUser,on_delete=models.CASCADE)
+    def __str__(self):
+        return str(self.user)
+    
+class Wallethistory(models.Model):
+    wallet=models.ForeignKey(Wallet,on_delete=models.CASCADE)
+    coins=models.IntegerField(default=0)
+    task=models.CharField(max_length=30)
+    created_at=models.DateField()
+    def __str__(self):
+        return str(self.user)
