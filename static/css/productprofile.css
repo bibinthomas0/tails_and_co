@@ -1,5 +1,5 @@
 body {
-    background-color: #ecedee
+    background-color: #ffff
 }
 
 .card {
@@ -18,7 +18,7 @@ body {
 .thumbnail_images ul li {
     margin: 5px;
     padding: 10px;
-    border: 2px solid #eee;
+    border: 2px solid #ffff;
     cursor: pointer;
     transition: all 0.5s
 }
@@ -31,7 +31,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #ffff;
     height: 400px;
     width: 100%;
     overflow: hidden
@@ -40,7 +40,7 @@ body {
 .heart {
     height: 29px;
     width: 29px;
-    background-color: #eaeaea;
+    background-color: #ffff;
     border-radius: 50%;
     display: flex;
     justify-content: center;
@@ -138,7 +138,7 @@ body {
     width: 300px;
     border: none;
     color: #fff;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #ffff;
     transition: all 0.5s;
     z-index: 10
 }

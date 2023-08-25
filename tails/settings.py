@@ -14,7 +14,6 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 
-
 load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
-# SECURITY WARNING: don't run with debug turned on in production!
+
 DEBUG = True
 
 ALLOWED_HOSTS = []
@@ -35,6 +34,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+     "daphne",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'colorfield',
     'cart',
     'sending_email_app',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -166,13 +167,34 @@ CELERY_TIMEZONE = 'Asia/Kolkata'
 
 
 EMAIL_BACKEND ='django.core.mail.backends.smtp.EmailBackend'
-#add your host of the email here in this case its Gmail so we are going to use Gmail host
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
-#add the port number of the email server
 EMAIL_PORT = 587
-#add your gamil here
 EMAIL_HOST_USER = 'tailsandcorp@gmail.com'
-#add your password here
 EMAIL_HOST_PASSWORD = 'jgnwxvydsniaqzjf'
 DEFAULT_FROM_EMAIL='Celery <naincygupta100@gmail.com>'
+
+
+
+CELERY_BROKER_URL = 'amqp://guest:guest@localhost:5672//'
+
+ASGI_APPLICATION = "tails.asgi.application"
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}

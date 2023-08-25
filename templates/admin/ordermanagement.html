@@ -48,9 +48,42 @@
 
 {% endblock  %}
 {% block content %}
+
 <div class="row">
   <div class="col-lg-12 p-5 bg-white rounded shadow-sm mb-5">
-
+    <form action="" method="post">
+      {% csrf_token %}
+    <div class="class row mb-2">
+      <div class="col-md-4"></div>
+      <div class="col-md-2">
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="status" id="flexRadioDefault1" value="P">
+          <label class="form-check-label" for="flexRadioDefault1">
+            Proccessing
+          </label>
+        </div></div>
+      <div class="col-md-2">
+    <div class="form-check">
+      <input class="form-check-input" type="radio" name="status" id="flexRadioDefault1" value="S">
+      <label class="form-check-label" for="flexRadioDefault1">
+        Shipped
+      </label>
+    </div></div>
+    <div class="col-md-2">
+    <div class="form-check">
+      <input class="form-check-input" type="radio" name="status" id="flexRadioDefault2" checked value="D">
+      <label class="form-check-label" for="flexRadioDefault2">
+        Delivered
+      </label>
+    </div>
+    </div>
+    <div class="col-md-2">
+    <button class="badge badge-primary btn-sm" type="submit" >filter</button>
+  </div>
+  </div>
+  
+  
+  </form>
     <h3>Orders</h3>
     <div class="table-responsive">
       <table class="table">

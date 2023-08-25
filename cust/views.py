@@ -14,8 +14,9 @@ from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_control
 from django.contrib.auth.hashers import make_password
-from cart.models import Cart, CartItem, Order, OrderItem, Wishlist,Wallet,Wallethistory
-
+from cart.models import Cart, CartItem, Order, OrderItem, Wishlist,Wallet,Wallethistory,Refund,OrderReturn
+from datetime import date,timedelta
+from datetime import datetime, timedelta, timezone
 
 # Create your views here.
 def Homepage(request):
@@ -62,8 +63,6 @@ def Newaddrersspage(request):
 
 
 def Addresspage(request):
-    # gmail = request.session.get('gmail')
-    # cad=CustomUser.objects.get(email=gmail)
     data = Userdetails.objects.filter(userr=request.user)
     context = {"data": data}
     return render(request, "user/address.html", context)
@@ -101,6 +100,7 @@ def Profilepage(request):
         edit = CustomUser.objects.get(id=id)
         edit.email = email
         edit.name = name
+        edit.phone_number=phone_number
         edit.save()
         return redirect("profilec")
     cart, created = Cart.objects.get_or_create(user=request.user)
@@ -109,9 +109,11 @@ def Profilepage(request):
     d = request.user
     try:
         wallet=Wallet.objects.get(user=d)
+        wallethistory=Wallethistory.objects.filter(wallet=wallet).order_by('-created_at')
     except:
         wallet=Wallet.objects.create(user=d)
-    context = {"d": d, "numitems": numitems,'wallet':wallet}
+        wallethistory=None
+    context = {"d": d, "numitems": numitems,'wallet':wallet,'wallethistory':wallethistory}
     return render(request, "user/profile.html", context)
 
 
@@ -159,10 +161,15 @@ def Loginpage(request):
         user = authenticate(request, email=email, password=password)
         if user is not None:
             login(request, user)
+            try:
+                wallet = Wallet.objects.get(user=request.user)
+            except:
+                Wallet.objects.create(user=request.user)
             return redirect("home")
         else:
             messages.error(request, "Invalid credentials")
     return render(request, "login.html")
+
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def Otppage(request):
     email = request.session.get("gmail")
@@ -321,10 +328,6 @@ def singproduct(request, id):
 def userorders(request):
     cust = get_object_or_404(CustomUser, id=request.user.id)
     orders = Order.objects.filter(user=cust).order_by('-created_at')
-    # car = get_object_or_404(Cart, user=request.user)
-    # cart_items = CartItem.objects.filter(cart=car)
-    # for order in orders:
-    #     cart_items = CartItem.objects.filter(cart=car)
     context = {"orders": orders}
     return render(request, "user/orders.html", context)
 
@@ -376,7 +379,7 @@ def cartaddjs(request, id):
 # def verify_otp(request):
 #     if request.method == 'POST':
 #         user_otp = request.POST.get('otp')
-#         generated_otp = request.session.get('generated_otp')  # Retrieve from session
+#         generated_otp = request.session.get('generated_otp')  
 
 #         if user_otp == generated_otp:
 #             return redirect('success_page')
@@ -384,6 +387,9 @@ def cartaddjs(request, id):
 #             return render(request, 'verify_otp.html', {'error_message': 'Invalid OTP'})
 
 #     return render(request, 'verify_otp.html')
+
+
+
 def order_deatails(request,id):
     order=Order.objects.get(id=id)
     order_items=OrderItem.objects.filter(order=order)
@@ -393,14 +399,26 @@ def order_deatails(request,id):
     except:
         sub_price = order.total_price
     address=Userdetails.objects.get(id=order.address.id)
-    context={'order_items':order_items,'order':order,'sub_price':sub_price,'address':address}
+    date=datetime.now(timezone.utc)
+    context={'order_items':order_items,'order':order,'sub_price':sub_price,
+             'address':address,'date':date}
     return render(request, 'user/orderitems.html',context)
+
 def userorder_cancel(request,id):
     edit=OrderItem.objects.get(id=id)
     edit.status='C'
     edit.save()
+    tt = edit.total_itemprice
+    wallet = Wallet.objects.get(user=request.user)
+    total_coins=wallet.coins
+    total_coins += tt
+    wallet.coins = total_coins 
+    wallet.save()
+    Wallethistory.objects.create(task=f"Product cancel {edit.product.product.name}",wallet=wallet,coins=edit.total_itemprice)
     id = edit.order.id
     return redirect('order_deatails',id)
+
+
 def searchproduct(request):
     name=request.GET.get('name')
     products=[]
@@ -409,4 +427,28 @@ def searchproduct(request):
         products=productcolor.objects.filter(product=pro)
     context={'name':name,'products':products}
     return render(request,'search.html',context)
-            
+
+
+def product_return(request,id):
+    orderitem=OrderItem.objects.get(id=id)
+    orderitem.returnstatus = True
+    orderitem.save()
+    try:
+        c = orderitem.order.coupon_applied
+        order = OrderItem.objects.filter(order=orderitem.order)
+        count = order.count()
+        k = 15
+        first = c.discount//count
+        fi = Decimal(first)
+        total_price= orderitem.total_itemprice - fi + k
+        print(total_price)
+    except:
+        k = 15
+        total_price =orderitem.total_itemprice + k
+    finally:
+        OrderReturn.objects.create(orderitem=orderitem,user=request.user,total_price=total_price)
+        id = orderitem.order.id
+    return redirect('order_deatails',id)
+
+def tryy(request):
+    return render(request,'try.html')

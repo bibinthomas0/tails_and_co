@@ -10,35 +10,15 @@
   <link rel="stylesheet" href="{% static '/assets/css/onoff.css' %}" />
   <link rel="stylesheet" href="{% static '/css/profilee.css' %}" />
   <link rel="stylesheet" href="{% static '/css/orderdeatils.css' %}">
-  <link rel="stylesheet" href="{% static '/css/wallet.css' %}">
 <link rel="stylesheet" href="{% static 'css/trackorder.css' %}">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
   <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   {% endblock  %}
-{% block st %}
-
-
-{% endblock  %}
+{% block st %}{% endblock  %}
 {% block content %}
 <style>
-
-  .hi {
-    margin-top: 150px;
-    margin-right: 200px;
-    position: fixed;
-    top: 0;
-    right: 0;
-    width: 350px; /* Set the width of the fixed div */
-    height: 100%; /* Set the height of the fixed div */
-    overflow-y: scroll; /* Add vertical scrollbar when content overflows */
-    background-color: #ffff;
-    padding: 10px;
-    
-}
-
-
   /* Set the main container's height to 100% */
   #main-wrapper {
     height: 100%;
@@ -64,7 +44,7 @@
   }
 </style>
 <div class="row" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
-     data-header-position="fixed"  >
+     data-header-position="fixed">
     <!-- Sidebar Start -->
     <div class="col-md-3">
     <aside class="left-sidebar">
@@ -137,10 +117,10 @@
 
 <!------ Include the above in your HEAD tag ---------->
 
-<div class="container emp-profile" >
+<div class="container emp-profile">
             <form method="post">
-                <div class="row" style="overflow: hidden;">
-                    <div class="col-md-4" style="height: 400px;">
+                <div class="row">
+                    <div class="col-md-4 pl-3">
                         <div class="profile-img">
                             <img src="https://i.ibb.co/GtPHR8h/doggysadc.jpg" alt=""/>
                             <div class="file btn btn-lg btn-primary">
@@ -148,16 +128,14 @@
                                 <input type="file" name="file"/>
                             </div>
                         </div>
-                  
-               
-                      <div class="tab-content profile-tab" id="myTabContent">
+                        <div class="tab-content profile-tab ml-4" id="myTabContent">
                           <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                                     
-                                      <div class="row">
+                
+                                      <div class="row ">
                                           <div class="col-md-6">
                                               <label>Name</label>
                                           </div>
-                                          <div class="col-md-6">
+                                          <div class="col-md-6 ">
                                               <p>{{d.name}}</p>
                                           </div>
                                       </div>
@@ -177,75 +155,70 @@
                                               <p>{{d.phone_number}}</p>
                                           </div>
                                       </div>
-                                      
-                          </div>
-                        
-           
-                  </div>  </div>
-                    <div class="col-md-4" style="height: 400px;">
-                        <div class="profile-head">
-                                    <h5>
-                                        {{d.name}}
-                                    </h5>
-                                    <h6>
-                                        Pet lover
-                                    </h6>
-                                    <p class="proile-rating">orders : <span>..</span></p>
-                            <ul class="nav nav-tabs" id="myTab" role="tablist">
-                                <li class="nav-item">
-                                    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">About</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Timeline</a>
-                                </li>
-                            </ul>
-                        </div>
+                                     
+                          </div></div>
                     </div>
-                  
-                    <div class="content">
-                    <div class="hi col-md-4" >
-                      <div class="container d-flex justify-content-center">
-                        <div class=" p-3" style="width: 300px;">
-                          <div class="d-flex flex-row justify-content-between text-align-center">
-                          </div>
-                          <p class="text-dark">{{d.name}}</p>
-                          <div class="card-bottom pt-3 px-3 ">
-                            <div class="d-flex flex-row justify-content-between text-align-center">
-                              <div class="d-flex flex-column"><span>Balance coin</span><p>&euro; <span class="text-white">{{wallet.coins}}</span></p></div>
-                              <button class="btn btn-secondary"><i class="fas fa-arrow-right text-white"></i></button>
+                    <div class="col-sm-2"></div>
+                    <div class="col-sm-4">
+                      <!-- Monthly Earnings -->
+                      <div class="card">
+                        <div class="card-body">
+                          <div class="row alig n-items-start">
+                            <div class="col-8">
+                              <h5 class="card-title mb-9 fw-semibold"> Coins </h5>
+                              <h5>Balance: </h5><h4 class="fw-semibold mb-3">🪙{{wallet.coins}}</h4>
+                              <div class="d-flex align-items-center pb-1">
+                                <span
+                                  class="me-2 rounded-circle bg-light-success round-20 d-flex align-items-center justify-content-center">
+                                  <i class="ti ti-arrow-up-right text-success"></i>
+                                </span>
+                                <p class="text-dark me-1 fs-3 mb-0"></p>
+                    
+                              </div>
+                            </div>
+                            <div class="col-4">
+                              <div class="d-flex justify-content-end">
+                                <div
+                                  class="text-white bg-secondary rounded-circle p-6 d-flex align-items-center justify-content-center">
+                                  <i class="ti ti-currency-dollar fs-6"></i>
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </div>
+                        <div id="earning"></div>
                       </div>
-                      <div class=" w-100">
-                        <div class=" p-4">
+                      <div class="card w-100">
+                        <div class="card-body p-4">
                           <div class="mb-4">
-                            <h5 class="card-title fw-semibold">Recent earnings</h5>
+                            <h5 class="card-title fw-semibold">Recent Transactions</h5>
                           </div>
-                          <ul class="timeline-widget mb-0 position-relative ">
+                          <ul class="timeline-widget mb-0 position-relative mb-n5">
+                            {% for his in wallethistory %}
                             <li class="timeline-item d-flex position-relative overflow-hidden">
-                              <div class="timeline-time text-dark flex-shrink-0 text-end">09:30</div>
+                              <div class="timeline-time text-dark flex-shrink-0 text-end">{{his.created_at}}</div>
                               <div class="timeline-badge-wrap d-flex flex-column align-items-center">
                                 <span class="timeline-badge border-2 border border-primary flex-shrink-0 my-8"></span>
                                 <span class="timeline-badge-border d-block flex-shrink-0"></span>
                               </div>
-                              <div class="timeline-desc fs-3 text-dark mt-n1">Payment received from John Doe of $385.90</div>
+                              <div class="timeline-desc fs-3 text-dark mt-n1">{{his.task}}</div>
                             </li>
-                            
-                           
-                            
-                           
-                         
+                            {% endfor %}
                           </ul>
                         </div>
                       </div>
-
-
-            
+                    </div>
                 </div>
-             
+                <div class="row">
+                    
+                    <div class="col-md-4">
+                       
+                            
+                        </div>
+                    </div>
+                </div>
             </form>           
-        </div> </div> </div>
+        </div>
     
     
     {% endblock  %}

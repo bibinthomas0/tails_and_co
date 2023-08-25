@@ -1,0 +1,14 @@
+{% extends 'admin/index.html' %}
+{% block content %}
+
+<form method="post" action="">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label for="exampleInputPassword1" class="form-label">Notification content</label>
+      <input type="text" class="form-control" id="exampleInputPassword1" name="notification">
+    </div>
+    
+    <button type="submit" class="btn btn-primary">Send</button>
+  </form>
+
+{% endblock  %}

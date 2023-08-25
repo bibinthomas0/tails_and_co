@@ -30,4 +30,8 @@ path('deleteimage/<int:id>/', views.deleteimage, name='deleteimage'),
 path('cropimage', views.cropimage, name='cropimage'),
 path('croper', views.croper, name='croper'),
 path('deactivatecoupon/<int:id>/', views.deactivatecoupon, name='deactivatecoupon'),
+path('returns', views.Returns, name='returns'),
+path('returndetails/<int:id>/', views.returndetails, name='returndetails'),
+path('update_return_status/<int:id>/', views.update_return_status, name='update_return_status'),
+path('owner_notifications', views.owner_notifications, name='owner_notifications'),
 ]

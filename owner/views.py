@@ -13,11 +13,13 @@ from django.core.mail import send_mail
 from django.contrib import messages
 from cust.models import CustomUser, CustomUserManager, Userdetails
 from django.shortcuts import redirect, render, HttpResponse, get_object_or_404
-from .models import Product, Subcategory, Category, ProductImage, productcolor
-from cart.models import Cart, CartItem, Order, OrderItem, Coupon
+from .models import Product, Subcategory, Category, ProductImage, productcolor,Notifications
+from cart.models import Cart, CartItem, Order, OrderItem, Coupon,OrderReturn,Wallet,Wallethistory,Wishlist,Refund
 from sending_email_app.tasks import send_mail_func,send_mail_order,send_mail_orderstatus
 from datetime import date,timedelta
 from datetime import datetime, timedelta, timezone
+from cust.signals import custom_notification
+
 
 # Create your views here.
 def AdminDashboard(request):
@@ -30,10 +32,10 @@ def AdminDashboard(request):
         to_date = datetime.strptime(To_date_str, "%m/%d/%Y").strftime(
             "%Y-%m-%d %H:%M:%S"
         )
-    else:  # Make sure to handle the else case to avoid the 'date' variable issue
+    else: 
         from_date = None
         to_date = None
-    week_date = datetime.now(timezone.utc) - timedelta(days=7)  # Use timezone.now() for Django's timezone-aware datetime
+    week_date = datetime.now(timezone.utc) - timedelta(days=7) 
     month_date = datetime.now(timezone.utc) - timedelta(days=30)
     end_date = datetime.now(timezone.utc)
     weekly = Order.objects.filter(created_at__range=(week_date, end_date))
@@ -270,6 +272,12 @@ def Productdelete(request, id):
 
 def Orders(request):
     orders = Order.objects.all().order_by("-created_at")
+    if request.method == 'POST':
+        status = request.POST.get('status')
+        print(status)
+        items = OrderItem.objects.filter(status=status)
+    # Get the distinct orders associated with those items
+        orders = Order.objects.filter(items__in=items).distinct().order_by("-created_at")
     paginator = Paginator(orders, per_page=3)
 
     page_number = request.GET.get("page")
@@ -318,7 +326,6 @@ def variantedit(request, id):
         edit.color = color
         edit.price = price
         edit.save()
-
         return redirect("addproduct")
     pro = productcolor.objects.get(id=id)
     return render(request, "admin/variantedit.html", {"pro": pro})
@@ -394,9 +401,6 @@ from django.views.decorators.csrf import csrf_exempt
 def croper(request):
     return render(request,'admin/imagecrop.html')
 
-
-
-
 @csrf_exempt
 def cropimage(request):
     print('aaaaaaaaaaaaaaaa')
@@ -405,16 +409,10 @@ def cropimage(request):
         try:
             data = json.loads(request.body)
             image_data = data.get('image_data')
-            print('hhhhhhh')
-            # Here, you can process the image_data as needed, such as saving it to a model or file
-            # Example: Save the cropped image to a model
-            # YourModel.objects.create(image_field=image_data)
-            
-            # Return a response indicating success
+    
             return JsonResponse({'message': 'Image cropped and saved successfully.'})
         
         except Exception as e:
-            print('kkkkkkkkkkkkkkkk')
             return JsonResponse({'error': str(e)}, status=500)
     
 def deactivatecoupon(request,id):
@@ -422,3 +420,41 @@ def deactivatecoupon(request,id):
     coup.active=False
     coup.save()
     return redirect('admincoupon')
+
+def Returns(request):
+    returns = OrderReturn.objects.all().order_by('-created_at')
+    paginator = Paginator(returns, per_page=3)
+    page_number = request.GET.get("page")
+    page = paginator.get_page(page_number)
+    context = {'returns': page}
+    return render(request,'admin/return.html', context)
+
+
+def returndetails(request,id):
+    item = OrderReturn.objects.get(id=id)
+    context = {'item':item}
+    return render(request,'admin/returndetails.html', context)
+
+def update_return_status(request,id):
+    if request.method == "POST":
+        st = request.POST.get("status")
+        edit = OrderReturn.objects.get(id=id)
+        edit.status = st
+        edit.save()
+        tt = edit.total_price
+        if edit.status == 'R':
+            wallet = Wallet.objects.get(user=edit.user)
+            total_coins=wallet.coins
+            total_coins += tt
+            wallet.coins = total_coins
+            wallet.save()
+            Wallethistory.objects.create(task=f"Product return {edit.orderitem.product.product.name}",wallet=wallet,coins=edit.total_price)
+        return redirect('returndetails',id)
+
+def owner_notifications(request):
+    if request.method == 'POST':
+        content = request.POST.get('notification')
+        Notifications.objects.create(content=content)
+        return redirect('owner_notifications')
+    return render(request, 'admin/notifi.html')
+        
