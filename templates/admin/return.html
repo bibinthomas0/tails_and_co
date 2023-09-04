@@ -4,7 +4,7 @@
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
-
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
 {% endblock  %}
 {% block css %}<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
@@ -48,9 +48,101 @@
 
 {% endblock  %}
 {% block content %}
-<div class="row">
-  <div class="col-lg-12 p-5 bg-white rounded shadow-sm mb-5">
-
+    <div class="row" style="background-color: white; padding-top:30px">
+      <div class="col md 12">
+     <!-- BEGIN SEARCH INPUT -->
+     <form action="" method="post">
+      {% csrf_token %}
+     <div class="input-group">
+      
+      <input type="text" class="form-control" value="" style="margin-right:10px;" placeholder="Search by username" name="search">
+      <span class="input-group-btn">
+        <button class="btn btn-primary" type="submit" style="margin-right:10px;"><i class="fa fa-search"></i></button> 
+        <a href="{% url 'returns' %}"><button type="button"  class="btn btn-secondary btn-sm btn-rounded">Refresh</button></a> 
+      </span>
+    </div></form>
+    <!-- END SEARCH INPUT -->
+    <p>{{search}}</p>
+    
+    <div class="padding"></div>
+    
+    <div class="row">
+      <!-- BEGIN ORDER RESULT -->
+      <div class="col-sm-6">
+        <div class="btn-group">
+          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+            Order by <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu" role="menu">
+            <li><a href="#">Name</a></li>
+            <li><a href="#">Date</a></li>
+            <li><a href="#">View</a></li>
+            <li><a href="#">Rating</a></li>
+          </ul>
+        </div>
+      </div>
+      <!-- END ORDER RESULT -->
+    </div></div></div>
+    <div class="row" >
+      <div class="col-lg-12 p-5 bg-white rounded shadow-sm mb-5" style="align-items: end;">
+        <div class="grid search">
+          <div class="grid-body">
+            <div class="row">
+              <!-- BEGIN FILTERS -->
+              <div class="col-md-3">
+                <form method="GET" action="{% url 'order_return_filter' %}">
+                  {% csrf_token %}
+                <h2 class="grid-title"><i class="fa fa-filter"></i> Filters</h2>
+                <hr>
+                
+                <!-- BEGIN FILTER BY CATEGORY -->
+                <h4>By Status:</h4>
+                <div class="checkbox">
+                  <label><input type="checkbox" name="{{ form.P.name }}" class="icheck" value="P" {% if form.P.value %}checked{% endif %}> Processing</label>
+              </div>
+              <div class="checkbox">
+                  <label><input type="checkbox" name="{{ form.C.name }}" class="icheck" value="C" {% if form.C.value %}checked{% endif %}> Collected</label>
+              </div>
+              <div class="checkbox">
+                  <label><input type="checkbox" name="{{ form.R.name }}" class="icheck" value="R" {% if form.R.value %}checked{% endif %}> Returned</label>
+              </div>
+             
+            
+                <button type="submit" class="btn btn-primary btn-sm">Filter Orders</button>
+                <!-- END FILTER BY CATEGORY -->
+              </form>
+                <div class="padding"></div>
+                
+                {% comment %} <!-- BEGIN FILTER BY DATE -->
+                <h4>By Price:</h4>
+                From
+                <div class="input-group date form_date" data-date="2014-06-14T05:25:07Z" data-date-format="dd-mm-yyyy" data-link-field="dtp_input1">
+                  <input type="text" class="form-control">
+                  <span class="input-group-addon bg-blue"><i class="fa fa-th"></i></span>
+                </div>
+                <input type="hidden" id="dtp_input1" value="">
+                
+                To
+                <div class="input-group date form_date" data-date="2014-06-14T05:25:07Z" data-date-format="dd-mm-yyyy" data-link-field="dtp_input2">
+                  <input type="text" class="form-control">
+                  <span class="input-group-addon bg-blue"><i class="fa fa-th"></i></span>
+                </div>
+                <input type="hidden" id="dtp_input2" value="">
+                <!-- END FILTER BY DATE --> {% endcomment %}
+                
+                <div class="padding"></div>
+                
+                <!-- BEGIN FILTER BY PRICE -->
+                {% comment %} <h4>By price:</h4>
+                Between <div id="price1">$300</div> to <div id="price2">$800</div> {% endcomment %}
+                {% comment %} <div class="slider-primary">
+                  <div class="slider slider-horizontal" style="width: 152px;"><div class="slider-track"><div class="slider-selection" style="left: 30%; width: 50%;"></div><div class="slider-handle round" style="left: 30%;"></div><div class="slider-handle round" style="left: 80%;"></div></div><div class="tooltip top hide" style="top: -30px; left: 50.1px;"><div class="tooltip-arrow"></div><div class="tooltip-inner">300 : 800</div></div><input type="text" class="slider" value="" data-slider-min="0" data-slider-max="1000" data-slider-step="1" data-slider-value="[300,800]" data-slider-tooltip="hide"></div>
+                </div> {% endcomment %}
+                <!-- END FILTER BY PRICE -->
+              </div>
+       
+          
+              <div class="col-md-9">
     <h3>Returns</h3>
     <div class="table-responsive">
       <table class="table">

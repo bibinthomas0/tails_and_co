@@ -1,0 +1,49 @@
+{% extends 'admin/index.html' %}
+
+{% block content %}
+  <h2>Sales Chart</h2>
+
+
+
+  <h3>{{name}}</h3>
+  <div id="chart-container"></div>
+
+
+{% endblock %}
+
+{% block script %}
+
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log("DOM loaded");
+        
+        var options = {
+          chart: {
+            type: 'bar',
+            height: 350,
+          },
+          xaxis: {
+            categories: {{ day_labels|safe }},
+          },
+          series: [{
+            name: 'Total sales',
+            data: {{ daily_sales|safe }},
+          }],
+        };
+        
+        console.log("Options created");
+
+        var chartContainer = document.querySelector("#chart-container");
+        console.log("Chart container:", chartContainer);
+
+        var chart = new ApexCharts(chartContainer, options);
+        console.log("Chart instance created");
+
+        chart.render();
+        console.log("Chart rendered");
+    });
+</script>
+
+
+{% endblock  %}

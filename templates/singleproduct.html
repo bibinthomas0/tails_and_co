@@ -1,6 +1,11 @@
 {% extends 'base.html' %}
-{% block content %}
 {% load static %}
+{% block staticc %}
+<link rel="stylesheet" href="{% static 'css/magnify.css' %}">
+<script src="{% static 'js/magnify.js' %}"></script>
+{% endblock  %}
+{% block content %}
+
 
 
 <br><br>
@@ -9,7 +14,7 @@
            
             <div class="col-md-6 border-end d-flex flex-column justify-content-center">
                 
-                <div class="main_image">
+                <div class="magnify" style="margin-left: 200px; width:400px; height:400px;">
                     <img src="{{ k.first.image.url }}" id="main_product_image" width="350">
                 </div>
                 <div class="thumbnail_images">
@@ -57,7 +62,12 @@
                     
                     <a href="{% url 'addwishlist' id=data.id %}"><div class="buttons d-flex flex-row mt-5 gap-3">
                         <button class="btn btn-outline-dark">Add to wishlist</button></a> 
+                        {% if user.is_authenticated %}
                        <button class="addToCartBtn btn btn-dark" data-product-id="{{ data.id }}" id="addToCartBtn">Add to Basket</button>
+                       {% else %}
+                       <button class="addToGCartBtn btn btn-dark" data-product-id="{{ data.id }}" id="addToGCartBtn">Add to Basket</button>
+
+                       {% endif %}
                     </div>
                     {% else %}
                  
@@ -100,5 +110,7 @@
     }
 </script>
 <script src="{% static '/js/cartadd.js' %}"></script>
+<script src="{% static '/js/guestcartadd.js' %}"></script>
+
 
 {% endblock  %}

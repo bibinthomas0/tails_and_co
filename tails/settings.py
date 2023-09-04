@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+# from channels.middleware import ChannelsMiddleware
+# from channels.middleware import MiddlewareMixin
+from channels.middleware import BaseMiddleware
 
 
 load_dotenv()
@@ -34,6 +37,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'chartjs',
      "daphne",
     'django.contrib.admin',
     'django.contrib.auth',
@@ -48,16 +52,22 @@ INSTALLED_APPS = [
     'cart',
     'sending_email_app',
     'channels',
+    'pdfkit',
+   
 ]
 
 MIDDLEWARE = [
+    
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    # 'channels.middleware.ChannelsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    
 ]
 
 ROOT_URLCONF = 'tails.urls'
@@ -174,6 +184,11 @@ EMAIL_HOST_USER = 'tailsandcorp@gmail.com'
 EMAIL_HOST_PASSWORD = 'jgnwxvydsniaqzjf'
 DEFAULT_FROM_EMAIL='Celery <naincygupta100@gmail.com>'
 
+import os
+from django.core.asgi import get_asgi_application
+
+# os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'tails.settings')
+# application = get_asgi_application()
 
 
 CELERY_BROKER_URL = 'amqp://guest:guest@localhost:5672//'
@@ -198,3 +213,9 @@ CACHES = {
         }
     }
 }
+SESSION_COOKIE_NAME = "tails"
+
+# SESSION_ENGINE = "django.contrib.sessions.backends.db"  # Or "django.contrib.sessions.backends.cache"
+
+
+

@@ -1,4 +1,4 @@
-from cart.models import Cart, CartItem, Coupon, Usercoupon
+from cart.models import Cart, CartItem, Coupon, Usercoupon,Gcart,GcartItem,GuestUser,Userdetails,Address,Wallet,Wallethistory
 from owner.models import Product, productcolor
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -14,6 +14,7 @@ import razorpay
 from django.conf import settings
 from sending_email_app.tasks import send_mail_func, send_mail_order
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
+import random
 
 
 def CartAdd(request, id):
@@ -24,7 +25,6 @@ def CartAdd(request, id):
     cart_item.save()
     bag = CartItem.objects.all()
     return redirect("singproduct", id)
-       
 
 
 def CartRemove(request, id):
@@ -39,23 +39,47 @@ def CartRemove(request, id):
 
 
 def CartDetail(request):
-    cart, create = Cart.objects.get_or_create(user=request.user)
-    cart_items = CartItem.objects.filter(cart=cart)
-    numitems = cart_items.count()
-    cart_items = cart_items.annotate(
-        total_product_price=F("product__price") * F("quantity")
-    )
-    total_price = cart_items.aggregate(Sum("total_product_price"))[
-        "total_product_price__sum"
-    ]
-    subtotal = total_price
-    if cart.coupon is not None:
-        coup = get_object_or_404(Coupon, id=cart.coupon.id)
-        k = coup.discount
-        dis = Decimal(k)
-        total_price -= dis
-
-    total_stock = sum(item.product.stock for item in cart_items)
+    if request.user.is_authenticated:
+        cart, create = Cart.objects.get_or_create(user=request.user)
+        cart_items = CartItem.objects.filter(cart=cart)
+        numitems = cart_items.count()
+        cart_items = cart_items.annotate(
+            total_product_price=F("product__price") * F("quantity")
+        )
+        total_price = cart_items.aggregate(Sum("total_product_price"))[
+            "total_product_price__sum"
+        ]
+        subtotal = total_price
+        if cart.coupon is not None:
+            coup = get_object_or_404(Coupon, id=cart.coupon.id)
+            k = coup.discount
+            dis = Decimal(k)
+            total_price -= dis
+        coupons = Coupon.objects.all()
+        print(coupons)
+        total_stock = sum(item.product.stock for item in cart_items)
+    else:
+        session_id = request.session.session_key
+        if session_id is not None:
+            print(session_id)
+        else:
+            request.session.save()
+            session_id = request.session.session_key
+            print('hs    ',session_id)
+        guser, create = GuestUser.objects.get_or_create(identifier=session_id)
+        cart, create = Gcart.objects.get_or_create(guest_user=guser)
+        cart_items = GcartItem.objects.filter(cart=cart)
+        numitems = cart_items.count()
+        cart_items = cart_items.annotate(
+            total_product_price=F("product__price") * F("quantity")
+        )
+        total_price = cart_items.aggregate(Sum("total_product_price"))[
+            "total_product_price__sum"
+        ]
+        subtotal = total_price
+        coupons = Coupon.objects.all()
+        print(coupons)
+        total_stock = sum(item.product.stock for item in cart_items)
     context = {
         "cart_items": cart_items,
         "total_price": total_price,
@@ -63,17 +87,22 @@ def CartDetail(request):
         "numitems": numitems,
         "cart": cart,
         "subtotal": subtotal,
+        "coupons": coupons,
     }
     return render(request, "cartdetail.html", context)
 
-
+@login_required(login_url='login')
 def Checkout(request):
+    coins = 0
+    if request.method=='POST':
+        coins = request.POST.get('coins_applied')
     address = Userdetails.objects.filter(userr=request.user).order_by("-created_at")
     cart = get_object_or_404(Cart, user=request.user)
     cart_items = CartItem.objects.filter(cart=cart)
     k = 15
+    coins = 0
     total_price = (
-        int(sum((item.product.price * item.quantity for item in cart_items))) + k
+        int(sum((item.product.price * item.quantity for item in cart_items))) + k - coins
     )
 
     subtotal = total_price
@@ -88,6 +117,8 @@ def Checkout(request):
         {"amount": total_price * 100, "currency": "INR", "payment_capture": 1}
     )
     print(payment)
+    coin = Wallet.objects.get(user=request.user)
+    coin_available = coin.coins
     context = {
         "address": address,
         "cart_items": cart_items,
@@ -96,6 +127,7 @@ def Checkout(request):
         "dis": dis,
         "subtotal": subtotal,
         "payment": payment,
+        'coin_available':coin_available
     }
     return render(request, "checkout.html", context)
 
@@ -106,7 +138,10 @@ def create_order(request):
     total_price = Decimal(0)
     add = request.session.get("selected_address")
     payment1 = request.session.get("pay-method")
-    address = get_object_or_404(Userdetails, id=add)
+    ad = get_object_or_404(Userdetails, id=add)
+    address = Address.objects.create(custom_name=ad.custom_name,city = ad.city,
+    landmark = ad.landmark ,pincode=ad.pincode,house_name=ad.house_name,
+    state = ad.state)
     for cart_item in cart.items.all():
         total_price += cart_item.product.price * cart_item.quantity
     try:
@@ -115,20 +150,24 @@ def create_order(request):
         di = Decimal(dis)
         total_price -= di
         total_price_float = float(total_price)
+        order_id = str(random.randint(10000000, 99999999))
         order = Order.objects.create(
             user=request.user,
             address=address,
             total_price=total_price,
             payment_method=payment1,
             coupon_applied=coup,
+            order_id=order_id,
         )
     except:
         total_price_float = float(total_price)
+        order_id = str(random.randint(10000000, 99999999))
         order = Order.objects.create(
             user=request.user,
             address=address,
             total_price=total_price,
             payment_method=payment1,
+            order_id=order_id,
         )
     client = razorpay.Client(auth=(settings.KEY, settings.SECRET))
     payment = client.order.create(
@@ -197,20 +236,39 @@ def update_cart_item_quantity(request):
         except CartItem.DoesNotExist:
             return JsonResponse({"status": "error", "message": "Cart item not found."})
 
-
+@login_required(login_url='guest_cart_add')
 def cartaddjs(request, id):
     cart, created = Cart.objects.get_or_create(user=request.user)
     product = get_object_or_404(productcolor, id=id)
     cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
     cart_item.quantity += 1
     cart_item.save()
-
-    # Add a success message
     cartdetail_url = reverse("cartdetail")
     product_link = f'<a href="{cartdetail_url}">Go to cart</a>'
     success_message = f"Item added to Cart..{product_link}"
 
     return JsonResponse({"success": success_message})
+
+
+def guest_cart_add(request, id):
+    session_id = request.session.session_key
+    if session_id is None:
+        request.session.save()
+        session_id = request.session.session_key    
+    guser, created = GuestUser.objects.get_or_create(identifier=session_id)
+    gcart, created = Gcart.objects.get_or_create(guest_user=guser)
+    product = get_object_or_404(productcolor, id=id)
+    gcart_item, created = GcartItem.objects.get_or_create(cart=gcart, product=product)
+    gcart_item.quantity += 1
+    gcart_item.save()
+    
+    cartdetail_url = reverse("cartdetail")
+    product_link = f'<a href="{cartdetail_url}">Go to cart</a>'
+    success_message = f"Item added to Cart..{product_link}"
+
+    return JsonResponse({"success": success_message})
+
+
 
 
 @csrf_exempt
@@ -243,6 +301,7 @@ def update_cart_quantity(request):
         else:
             return JsonResponse({"success": False, "error": "Invalid quantity"})
 
+@login_required(login_url='login')
 def apply_coupon(request):
     cart, created = Cart.objects.get_or_create(user=request.user)
     cart_items = CartItem.objects.filter(cart=cart)
@@ -264,15 +323,15 @@ def apply_coupon(request):
                 "message": "already claimed.",
             }
         elif k > total_price:
-                response_data = {
-                    "success": False,
-                    "message": f"Minimum cart amount ₹{k}.",
-                }
+            response_data = {
+                "success": False,
+                "message": f"Minimum cart amount ₹{k}.",
+            }
         elif coup.active == False:
-                response_data = {
-                    "success": False,
-                    "message": "coupon expired.",
-                }
+            response_data = {
+                "success": False,
+                "message": "coupon expired.",
+            }
         else:
             cart.coupon = coup
             cart.save()
@@ -322,7 +381,12 @@ def create_orders(request):
     total_price = Decimal(0)
     add = request.session.get("selected_address")
     payment1 = request.session.get("pay-method")
-    address = get_object_or_404(Userdetails, id=add)
+    ad = get_object_or_404(Userdetails, id=add)
+    address = Address.objects.create(custom_name=ad.custom_name,
+    city = ad.city,
+    landmark = ad.landmark,pincode=ad.pincode,house_name=ad.house_name,
+    state = ad.state)
+    order_id = str(random.randint(10000000, 99999999))
     for cart_item in cart.items.all():
         total_price += cart_item.product.price * cart_item.quantity
     try:
@@ -336,6 +400,7 @@ def create_orders(request):
             total_price=total_price,
             payment_method=payment1,
             coupon_applied=coup,
+            order_id=order_id,
         )
     except:
         order = Order.objects.create(
@@ -343,6 +408,7 @@ def create_orders(request):
             address=address,
             total_price=total_price,
             payment_method=payment1,
+            order_id=order_id,
         )
     for cart_item in cart.items.all():
         OrderItem.objects.create(

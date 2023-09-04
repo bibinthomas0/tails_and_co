@@ -1,0 +1,97 @@
+
+@import url('https://fonts.googleapis.com/css?family=Rubik&display=swap');
+
+
+p{
+    font-size: calc(14px + (18 - 14) * ((100vw - 360px) / (1600 - 300))) !important;;
+}
+
+
+.card{
+    border-radius:0 ;
+}
+
+.card-header{
+    height:calc(80px + (120 - 80) * ((100vw - 360px) / (1600 - 300))) !important;
+    background: #fff;
+    background-image: url('https://image.freepik.com/free-vector/colorful-confetti-celebration-carnival-ribbons_29865-642.jpg');
+    background-repeat:no-repeat;
+    background-size:cover;
+    background-position:center;
+    width: 100%;
+}
+
+.card-body{
+    border-radius: 9px !important;
+}
+
+small{
+    font-size: calc(12px + (14 - 12) * ((100vw - 360px) / (1600 - 300))) !important;
+    display: flex;
+    justify-content: center !important;
+}
+
+svg{
+    position: relative;
+    left: -11px !important;
+}
+
+h6{
+    font-size: calc(14px + (18 - 14) * ((100vw - 360px) / (1600 - 300))) !important;
+}
+
+.media{
+    overflow: hidden;
+    background-image: linear-gradient(to left, rgb(97, 109, 240),rgb(148, 202, 233));
+    background-repeat: no-repeat;
+    border-radius:5px !important;
+    
+}
+
+.img-icon{
+    width: 30px;
+    opacity: 0.8;
+    cursor: pointer;
+}
+
+
+
+.modal-content{
+    width: calc(390px + 10 * ((100vw - 320px) / 680)) !important;
+      
+}
+
+
+
+.modal-content{
+    background: transparent !important;
+   
+}
+
+.cross{
+    font-size: 25px !important;
+    cursor: pointer;
+
+}
+
+
+button:focus {
+    -moz-box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+    outline-width: 0
+}
+
+.btn-primary{
+    border-radius:0;
+    padding: 10px 30px 10px 30px !important;
+}
+
+
+
+@media (max-width: 412px) {
+    .modal-content{
+        padding: 0;
+        margin: 0;
+    } 
+}

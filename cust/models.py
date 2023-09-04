@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from cust.managers import CustomUserManager
+from django.utils import timezone
+
 
 
 class CustomUser(AbstractBaseUser):
@@ -38,10 +40,26 @@ class Userdetails(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return self.custom_name
+    
+    
+class Usernotification(models.Model):
+    user = models.ForeignKey(CustomUser,on_delete=models.CASCADE)
+    content = models.TextField()
+    created_at = models.DateTimeField()
+    def save(self, *args, **kwargs):
+        current_time_utc = timezone.now()
+        time_difference = timezone.timedelta(hours=+5, minutes=+30)
+        time_in_desired_timezone = current_time_utc + time_difference
 
-# class GuestUser(models.Model):
-#     identifier = models.CharField(max_length=100, unique=True)
-#     created_at = models.DateTimeField(auto_now_add=True)
+        self.created_at = time_in_desired_timezone
+        super(Usernotification, self).save(*args, **kwargs)
 
-#     def __str__(self):
-#         return self.identifier
+    def __str__(self):
+        return self.user.name
+
+
+
+
+
+
+

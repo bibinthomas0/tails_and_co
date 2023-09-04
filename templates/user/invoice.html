@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+    <title>invoice</title>
+    <style>
+        .body{
+            margin-top:20px;
+            background-color:#eee;
+            padding-bottom:100px;
+            }
+            .tr{
+                border-radius: 5px;
+            }
+           
+    </style>
+  </head>
+  <body>
+    
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="invoice-title">
+                    <h2>Invoice</h2><h3 class="pull-right"> Order id: {{order.order_id}} </h3>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-xs-6">
+                        <address>
+                        <strong>Billed To:</strong><br>
+                            {{order.address.custom_name}}<br>
+                            {{order.address.house_name}}<br>
+                            {{order.address.landmark}}<br>
+                            {{order.address.state}}, {{order.address.pincode}}<br>
+                            {{order.user.phone_number}}
+                        </address>
+                    </div>
+                    <div class="col-xs-6 text-right">
+                        <address>
+                        <strong>Shipped To:</strong><br>
+                        {{order.address.custom_name}}<br>
+                        {{order.address.house_name}}<br>
+                        {{order.address.landmark}}<br>
+                        {{order.address.state}}, {{order.address.pincode}}<br>
+                        {{order.user.phone_number}}
+                        </address>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-6">
+                        <address>
+                            <strong>Payment Method:</strong><br>
+                            {{order.payment_method}}<br>
+                            {{order.user.email}}
+                        </address>
+                    </div>
+                    <div class="col-xs-6 text-right">
+                        <address>
+                            <strong>Order Date:</strong><br>
+                            {{order.created_at}} <br><br>
+                        </address>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title"><strong>Order summary</strong></h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                            <table class="table table-condensed">
+                                <thead>
+                                    <tr class="tr">
+                                        <td><strong>Item</strong></td>
+                                        <td class="text-center"><strong>Price</strong></td>
+                                        <td class="text-center"><strong>Quantity</strong></td>
+                                        <td class="text-center"><strong>Status</strong></td>
+                                        <td class="text-right"><strong>Totals</strong></td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- foreach ($order->lineItems as $line) or some such thing here -->
+                                    {% for item in orderitems %}
+                                    <tr>
+                                        <td>{{item.product.product.name}}</td>
+                                        <td class="text-center">{{item.product.price}}</td>
+                                        <td class="text-center">{{item.quantity}}</td>
+                                        <td class="text-center">{{item.get_status_display}}</td>
+                                        <td class="text-right">{{item.total_itemprice}}</td>
+                                    </tr>
+                                    {% endfor %}
+                                    <tr>
+                                        <td class="thick-line"></td>
+                                        <td class="thick-line"></td>
+                                        <td class="thick-line"></td>
+                                        <td class="thick-line text-center"><strong>Subtotal</strong></td>
+                                        <td class="thick-line text-right">{{total}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="no-line"></td>
+                                        <td class="no-line"></td>
+                                        <td class="thick-line"></td>
+                                        <td class="no-line text-center"><strong>Shipping</strong></td>
+                                        <td class="no-line text-right">15.00</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="no-line"></td>
+                                        <td class="no-line"></td>
+                                        <td class="thick-line"></td>
+                                        <td class="no-line text-center"><strong>Coupon discount</strong></td>
+                                        <td class="no-line text-right">{{order.coupon_applied.discount}},{{order.coupon_applied.code}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="no-line"></td>
+                                        <td class="no-line"></td>
+                                        <td class="thick-line"></td>
+                                        <td class="no-line text-center"><strong>Total</strong></td>
+                                        <td class="no-line text-right">{{order.total_price}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+  
+  </body>
+</html>
+
+
+
+
+
+

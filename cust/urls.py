@@ -30,4 +30,10 @@ urlpatterns = [
     path('searchproduct/', views.searchproduct, name='searchproduct'),
     path('product_return/<int:id>/', views.product_return, name='product_return'),
     path('tryy',views.tryy,name='tryy'),
+    path('invoice',views.invoice,name='invoice'),
+    path('gtouser/<str:s_id>/',views.gtouser,name='gtouser'),
+    path('profilec/changepassword/',views.changepassword,name='changepassword'),
+    path('generate_invoice/<int:id>/', views.generate_invoice, name='generate_invoice'),
+    path('deleteaddress/<int:id>/',views.Addressdelete,name='deleteaddress'),
+    
 ]

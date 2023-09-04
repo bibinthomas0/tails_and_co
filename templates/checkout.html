@@ -163,6 +163,9 @@
                     <div class="p-3 bg-light mb-3">
                         <h5 class="font-size-16 mb-0">Order Summary <span class="float-end ms-2"></span></h5>
                     </div>
+                    {% if coin_available < 1000 or total_price < 1000 %}<small>Minimum coin and cart amount should be more than 1000 to apply coins</small> {% else %}
+                    <small>Coins available  🪙{{coin_available}}</small><br>
+              <label><input type="checkbox" name="" class="icheck" value="D" > Get discount of 500</label>{% endif %}
                     
                     <div class="table-responsive">
                         <table class="table table-centered mb-0 table-nowrap">

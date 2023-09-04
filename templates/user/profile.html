@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
  
-  {% block staticc %} <link rel="shortcut icon" type="image/png" href="{% static 'assets/images/logos/favicon.png' %}" />
+  {% block staticc %} 
   <link rel="stylesheet" href="{% static '/assets/css/styles.min.css' %}" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
@@ -19,6 +19,9 @@
 {% block st %}{% endblock  %}
 {% block content %}
 <style>
+  .navbar{
+    padding:.5rem;
+  }
   /* Set the main container's height to 100% */
   #main-wrapper {
     height: 100%;
@@ -87,7 +90,7 @@
               </a>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="" aria-expanded="false">
+              <a class="sidebar-link" href="changepassword/" aria-expanded="false">
                 <span>
                   <i class="ti ti-cards"></i>
                 </span>

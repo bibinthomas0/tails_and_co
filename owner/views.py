@@ -1,25 +1,30 @@
 from django.shortcuts import render
 import random
 import json
+import calendar
+from calendar import monthrange
+from django.db import connection
 from django.core.paginator import Paginator, Page
 from decimal import Decimal
 from datetime import datetime
-from django.db.models import Q
+from django.db.models import Q,Sum
 from django.http import JsonResponse
 from django.contrib.auth import authenticate, login, logout, validators
 from django.contrib.auth.decorators import login_required
 from django.contrib.sessions.models import Session
 from django.core.mail import send_mail
 from django.contrib import messages
-from cust.models import CustomUser, CustomUserManager, Userdetails
+from cust.models import CustomUser, CustomUserManager, Userdetails,Usernotification
 from django.shortcuts import redirect, render, HttpResponse, get_object_or_404
 from .models import Product, Subcategory, Category, ProductImage, productcolor,Notifications
-from cart.models import Cart, CartItem, Order, OrderItem, Coupon,OrderReturn,Wallet,Wallethistory,Wishlist,Refund
+from cart.models import Cart, CartItem, Order, OrderItem, Coupon,OrderReturn,Wallet,Wallethistory,Wishlist,Refund,Address
 from sending_email_app.tasks import send_mail_func,send_mail_order,send_mail_orderstatus
 from datetime import date,timedelta
 from datetime import datetime, timedelta, timezone
 from cust.signals import custom_notification
-
+from chartjs.views.lines import BaseLineChartView
+from django.db.models import Count
+from .forms import OrderStatusFilterForm,OrderReturnStatusFilterForm
 
 # Create your views here.
 def AdminDashboard(request):
@@ -37,16 +42,28 @@ def AdminDashboard(request):
         to_date = None
     week_date = datetime.now(timezone.utc) - timedelta(days=7) 
     month_date = datetime.now(timezone.utc) - timedelta(days=30)
+    year_date = datetime.now(timezone.utc) - timedelta(days=365)
+    today = datetime.now(timezone.utc) - timedelta(days=1)
     end_date = datetime.now(timezone.utc)
     weekly = Order.objects.filter(created_at__range=(week_date, end_date))
     monthly = Order.objects.filter(created_at__range=(month_date, end_date))
+    yearly = Order.objects.filter(created_at__range=(year_date, end_date))
+    daily = Order.objects.filter(created_at__range=(today, end_date))
+    
     total_week_amount=0
     total_month_amount=0
+    total_year_amount=0
+    total_today_amount=0
     for dates in weekly:
         total_week_amount+=dates.total_price
     for dates in monthly:
         total_month_amount+=dates.total_price
-    context={'weekly':weekly,'monthly':monthly,'total_week_amount':total_week_amount,'total_month_amount':total_month_amount}
+    for dates in yearly:
+        total_year_amount+=dates.total_price
+    for dates in daily:
+        total_today_amount+=dates.total_price
+    context={'weekly':weekly,'monthly':monthly,'total_week_amount':total_week_amount,
+             'total_month_amount':total_month_amount,'total_year_amount':total_year_amount,'total_today_amount':total_today_amount}
     
     return render(request, "admin/dashboard.html",context)
 
@@ -273,18 +290,20 @@ def Productdelete(request, id):
 def Orders(request):
     orders = Order.objects.all().order_by("-created_at")
     if request.method == 'POST':
-        status = request.POST.get('status')
-        print(status)
-        items = OrderItem.objects.filter(status=status)
-    # Get the distinct orders associated with those items
-        orders = Order.objects.filter(items__in=items).distinct().order_by("-created_at")
+        search = request.POST.get('search')
+        orders = Order.objects.filter(address__custom_name__icontains=search).order_by("-created_at")
+        
     paginator = Paginator(orders, per_page=3)
 
     page_number = request.GET.get("page")
     page = paginator.get_page(page_number)
-    context = {
-        "orders": page,
-    }
+    try:
+        k= f'search results for "{search}"'
+        context = {'search':k,"orders": page,}
+    except: 
+        context = {
+            "orders": page,
+        }
     return render(request, "admin/ordermanagement.html", context)
 
 
@@ -296,17 +315,23 @@ def update_order_status(request, id):
         edit.save()
         id = edit.order.id
         email=edit.order.user.email
-        print(email)
-        print(edit.order.address.custom_name)
         try:
             if st=='S': 
-                message=f"Good news! {edit.order.address.custom_name}, Your order {edit.product.product.name} has shipped. We will reach you soon✓"
+                message=f"Good news! {edit.order.address.custom_name}, Your order {edit.product.product.name} has been shipped. We will reach you soon✓"
+                notif=f"Good news!, Your order '{edit.product.product.name}' has been shipped."
+                
             elif st=='O':
                 message=f"Hey {edit.order.address.custom_name}, Your order {edit.product.product.name} has been reached the hub nearest to you, Our delivery partner will reach you as soon as possible "
+                notif=f"Hey, Your order '{edit.product.product.name}' with id {edit.order.order_id} is out for delivery,"
+                
             elif st=='D':
                 message=f"{edit.order.address.custom_name}, Your order {edit.product.product.name} has been succesfully delivered"
-            send_mail_orderstatus(request,message,email)
+                notif=f"{edit.order.address.custom_name}, Your order {edit.product.product.name} has been succesfully delivered"
+            # send_mail_orderstatus(request,message,email)
         finally:
+            gg = Usernotification.objects.create(user=edit.order.user,content=notif)
+            gg.save()
+            print(gg.content)
             return redirect("adminorder_deatails", id)
 
 
@@ -375,7 +400,7 @@ def adminorder_deatails(request, id):
         sub_price = order.total_price + x
     except:
         sub_price = order.total_price
-    address = Userdetails.objects.get(id=order.address.id)
+    address = Address.objects.get(id=order.address.id)
     context = {
         "order_items": order_items,
         "order": order,
@@ -391,6 +416,8 @@ def order_cancel(request, id):
     edit.save()
     id = edit.order.id
     return redirect("adminorder_deatails", id)
+
+
 def deleteimage(request,id):
     img=ProductImage.objects.get(id=id)
     img.delete()
@@ -403,9 +430,7 @@ def croper(request):
 
 @csrf_exempt
 def cropimage(request):
-    print('aaaaaaaaaaaaaaaa')
     if request.method == 'POST':
-        print('ddddddddddddddd')
         try:
             data = json.loads(request.body)
             image_data = data.get('image_data')
@@ -457,4 +482,104 @@ def owner_notifications(request):
         Notifications.objects.create(content=content)
         return redirect('owner_notifications')
     return render(request, 'admin/notifi.html')
+
+def sales_chart_daily(request):
+    today = datetime.today()
+    past_7_days = [today - timedelta(days=i) for i in range(20)]
+
+    day_labels = [day.strftime('%Y-%m-%d') for day in past_7_days]
+    sales_data = Order.objects.filter(created_at__date__in=[day.date() for day in past_7_days])
+
+    daily_sales = []
+    for day in past_7_days:
+        x = sales_data.filter(created_at__date=day.date()).aggregate(total=Sum('total_price'))['total']
+        day_sales = int(x) if x is not None else 0
+        daily_sales.append(day_sales)
+        print(x)
+        name= 'Daily Report'
+    context = {'name':name,'day_labels': day_labels, 'daily_sales': daily_sales}
+    return render(request, 'admin/chart.html', context)
+
+def sales_chart_weekly(request):
+    today = datetime.now(timezone.utc)
+    past_weeks = [today - timedelta(weeks=i) for i in range(6, -1, -1)]
+
+    labels = [week.strftime('%Y-%m-%d') for week in past_weeks]
+    
+    weekly_sales = []
+    for week_start in past_weeks:
+        week_end = week_start + timedelta(days=6)
+        total_sales = Order.objects.filter(created_at__date__range=[week_start.date(), week_end.date()]).aggregate(total=Sum('total_price'))['total']
+        week_sales = int(total_sales) if total_sales is not None else 0
+        weekly_sales.append(week_sales)
+        print(week_sales)
+
+    context = {'name':'Weekly Report','day_labels': labels, 'daily_sales': weekly_sales}
+    return render(request, 'admin/chart.html', context)
+
+from datetime import datetime, timedelta
+from django.utils import timezone
+
+def sales_chart_monthly(request):
+    current_date = datetime.now(timezone.utc)
+    current_year = current_date.year
+    current_month = current_date.month
+
+    monthly_sales = []
+    labels = []
+
+    for i in range(12, -1, -1):
+        # Calculate the year and month for each past month
+        year = current_year - (i // 12)
+        month = (current_month - (i % 12)) % 12 or 12
+
+        # Calculate the start and end dates for the current month
+        month_start = datetime(year, month, 1, tzinfo=timezone.utc)
+        month_end = (month_start + timedelta(days=32)).replace(day=1, microsecond=0, second=0, minute=0, hour=0) - timedelta(seconds=1)
+
+        labels.append(month_start.strftime('%Y-%m-%d'))
+
+        # Calculate the total sales for the current month
+        total_sales = Order.objects.filter(created_at__range=(month_start, month_end)).aggregate(total=Sum('total_price'))['total']
+        month_sales = int(total_sales) if total_sales is not None else 0
+        monthly_sales.append(month_sales)
+
+    context = {'name': 'Monthly Report', 'day_labels': labels, 'daily_sales': monthly_sales}
+    return render(request, 'admin/chart.html', context)
+
+
+def order_filter_view(request):
+    form = OrderStatusFilterForm(request.GET)
+    if form.is_valid():
+        print('hii')
+        selected_statuses = [field_name for field_name, value in form.cleaned_data.items() if value]
+        print(selected_statuses)
+        filtered_orderitems = OrderItem.objects.filter(status__in=selected_statuses)
         
+        filtered_orders = []
+        
+        for order_item in filtered_orderitems:
+            filtered_order = Order.objects.get(id=order_item.order.id)
+            filtered_orders.append(filtered_order)
+    else:
+        filtered_orders = Order.objects.all()
+    paginator = Paginator(filtered_orders, per_page=3)
+
+    page_number = request.GET.get("page")
+    page = paginator.get_page(page_number)
+
+    return render(request, 'admin/ordermanagement.html', {'form': form, 'orders': page})
+
+def order_return_filter_view(request):
+    form = OrderReturnStatusFilterForm(request.GET)
+    if form.is_valid():
+        print('hii')
+        selected_statuses = [field_name for field_name, value in form.cleaned_data.items() if value]
+        print(selected_statuses)
+        filtered_orderitems = OrderReturn.objects.filter(status__in=selected_statuses)
+    paginator = Paginator(filtered_orderitems, per_page=3)
+
+    page_number = request.GET.get("page")
+    page = paginator.get_page(page_number)
+
+    return render(request, 'admin/return.html', {'form': form, 'returns': page})

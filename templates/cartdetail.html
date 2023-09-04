@@ -4,6 +4,7 @@
 {% block t %}
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <link rel="stylesheet" href="{% static '/css/emptycart.css' %}">
+<link rel="stylesheet" href="{% static '/css/applycoupon.css' %}">
 
 {% endblock  %}
 
@@ -49,7 +50,39 @@
     <div class="product-line-price">{{b.total_product_price }}</div>
   </div>
   {% endfor %}
+  <br>
+  <div class="container d-flex justify-content">
+    <button class="btn btn-primary" data-toggle="modal" data-target="#my-modal">Available coupons</button>
+    <div id="my-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog  modal-dialog-centered justify-content-center " role="document">
+            <div class="modal-content  border-0 mx-sm-3 mx-1">   
+                <div class="modal-body  p-0">
+                    <div class="row justify-content-center">
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-header border-0"><div class="row"><div class="col m-3 text-right"><button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span class="cross" aria-hidden="true">&times;</span> </button></div></div></div>
+                                
+                                <div class="card-body">
+                                 
+                                    <div class="row align-self-end mb-sm-5 mb-4"><div class="col align-self-end"><h6 class="align-items-end"> <b>Yeah ! You have some coupons !</b></h6><small class="text-muted">Grab it now </small></div> </div> 
+                                    {% for coupon in coupons %}        
+                                    <div class="media bg-dark align-items-center shadow-lg mb-2"> <svg xmlns="http://www.w3.org/2000/svg" class="mr-2" x="0px" y="0px" width="50" height="50" viewBox="0 0 172 172" style=" fill:#000000;"><g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="none"></path><g fill="#ffffff"><path d="M42.355,3.44c-6.63812,0 -11.58312,2.21719 -14.5125,5.6975c-2.92937,3.48031 -3.7625,7.80719 -3.7625,11.5025c0,8.78813 4.75688,15.92344 11.2875,20.5325c2.01563,1.42438 4.15219,2.55313 6.45,3.5475h-38.3775v37.84h6.88v86h151.36v-86h6.88v-37.84h-38.3775c2.29781,-0.99437 4.43438,-2.12312 6.45,-3.5475c6.53063,-4.60906 11.2875,-11.74437 11.2875,-20.5325c0,-3.69531 -0.83312,-8.02219 -3.7625,-11.5025c-2.92937,-3.48031 -7.87437,-5.6975 -14.5125,-5.6975c-6.86656,0 -12.41625,2.9025 -16.555,6.88c-4.13875,3.9775 -7.10844,8.98969 -9.89,13.76c-2.78156,4.77031 -5.40187,9.3525 -8.17,12.47c-2.76812,3.1175 -5.29437,4.73 -9.03,4.73c-3.73562,0 -6.26187,-1.6125 -9.03,-4.73c-2.76812,-3.1175 -5.38844,-7.69969 -8.17,-12.47c-2.78156,-4.77031 -5.75125,-9.7825 -9.89,-13.76c-4.13875,-3.9775 -9.68844,-6.88 -16.555,-6.88zM42.355,10.32c5.03906,0 8.47906,1.8275 11.7175,4.945c3.23844,3.1175 6.08719,7.56531 8.815,12.255c2.72781,4.68969 5.40188,9.5675 8.9225,13.545c0.06719,0.08063 0.14781,0.13438 0.215,0.215h-13.545c-6.93375,0 -14.09594,-2.06937 -19.2425,-5.6975c-5.14656,-3.62812 -8.2775,-8.53281 -8.2775,-14.9425c0,-2.59344 0.61813,-5.16 2.15,-6.9875c1.53188,-1.8275 4.04469,-3.3325 9.245,-3.3325zM129.645,10.32c5.20031,0 7.71313,1.505 9.245,3.3325c1.53188,1.8275 2.15,4.39406 2.15,6.9875c0,6.40969 -3.13094,11.31438 -8.2775,14.9425c-5.14656,3.62813 -12.30875,5.6975 -19.2425,5.6975h-13.545c0.06719,-0.08062 0.14781,-0.13437 0.215,-0.215c3.52063,-3.9775 6.19469,-8.85531 8.9225,-13.545c2.72781,-4.68969 5.57656,-9.1375 8.815,-12.255c3.23844,-3.1175 6.67844,-4.945 11.7175,-4.945zM10.32,51.6h55.04v24.08h-55.04zM72.24,51.6h27.52v26.875c0,0.1075 0,0.215 0,0.3225c0,0.1075 0,0.215 0,0.3225c-0.02687,0.25531 -0.02687,0.49719 0,0.7525v81.8075h-27.52v-81.915c0.02688,-0.215 0.02688,-0.43 0,-0.645c0.01344,-0.14781 0.01344,-0.28219 0,-0.43c0,-0.1075 0,-0.215 0,-0.3225zM106.64,51.6h55.04v24.08h-55.04zM17.2,82.56h48.16v79.12h-48.16zM106.64,82.56h48.16v79.12h-48.16z"></path></g></g></svg>
+                                        <div class="media-body mt-4 text-light">
+                                            <div class="row"> <div class="col-11">  <h6 class="pr-2"><b>{{coupon.code}}</b></h6><small class="mb-3"> Minimum amount : ₹{{coupon.minimumamount}}<br> Offer : 💰{{coupon.discount}}.</small></div></div>
+                                        </div>
+                                    </div>{% endfor %}
+                                    
+                                </div>
+                               
 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
     
      
       <div class="container" style="display: flex; justify-content: flex-end; width: 100%;">
@@ -69,6 +102,7 @@
                               <div class="input-group-append" style="color: rgb(60, 57, 57);">
                                   <button type="submit" class="btn">Apply</button>
                               </div>
+                              
                           </div>
                       </form>
                       <p id="coupon-message" style="color: red;"></p>
@@ -76,6 +110,7 @@
               
               
             
+
               </div>
           </div>
       </div>
@@ -99,10 +134,15 @@
       <div class="totals-value" id="cart-total" name="total">{{total_price}}</div>
     </div>
   </div>
+  {% if user.is_authenticated %}
   <a href="{% url 'checkout' %}" >
       <button class="checkout" id="checkoutButton">Checkout</button>
     </a >
-
+    {% else %}
+    <a href="{% url 'login' %}" >
+      <button class="checkout" id="checkoutButton">Checkoutt</button>
+    </a >
+    {% endif %}
 </div>
 <br>
 <br>

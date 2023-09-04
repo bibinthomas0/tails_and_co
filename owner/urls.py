@@ -1,5 +1,6 @@
 from django.urls import path,include
 from owner import views
+
 urlpatterns = [
 path('deletecategory/<int:id>/',views.Deletecategory,name='deletecategory'),
 path('adminusers',views.Adminusers,name='adminusers'),
@@ -34,4 +35,10 @@ path('returns', views.Returns, name='returns'),
 path('returndetails/<int:id>/', views.returndetails, name='returndetails'),
 path('update_return_status/<int:id>/', views.update_return_status, name='update_return_status'),
 path('owner_notifications', views.owner_notifications, name='owner_notifications'),
+path('orderchartsdaily/', views.sales_chart_daily, name='orderchartsdaily'),
+path('orderchartsweekly/', views.sales_chart_weekly, name='orderchartsweekly'),
+path('orderchartsmonthly/', views.sales_chart_monthly, name='orderchartsmonthly'),
+path('order_filter/', views.order_filter_view, name='order_filter'),
+path('order_return_filter/', views.order_return_filter_view, name='order_return_filter'),
+
 ]

@@ -13,4 +13,6 @@ urlpatterns = [
     path('thanku/', views.thanku, name='thanku'),
     path('selectaddress', views.selectaddress, name='selectaddress'),
     path('createorders', views.create_orders, name='createorders'),
+    path('singproduct/guest_cart_add/<int:id>/', views.guest_cart_add, name='guest_cart_add'),
+    path('changecolor/guest_cart_add/<int:id>/', views.guest_cart_add, name='guest_cart_add'),
 ]
