@@ -28,7 +28,7 @@
                             <div class="feed-item-list">
                                 <div>
                                     <h5 class="font-size-16 mb-1">Billing Info</h5>
-                                    <p class="text-muted text-truncate mb-4">Create Newaddress</p>
+                                    {% comment %} <p class="text-muted text-truncate mb-4">Create Newaddress</p> {% endcomment %}
                                     <div class="mb-3">
                                         
                                     </div>
@@ -163,9 +163,19 @@
                     <div class="p-3 bg-light mb-3">
                         <h5 class="font-size-16 mb-0">Order Summary <span class="float-end ms-2"></span></h5>
                     </div>
-                    {% if coin_available < 1000 or total_price < 1000 %}<small>Minimum coin and cart amount should be more than 1000 to apply coins</small> {% else %}
-                    <small>Coins available  🪙{{coin_available}}</small><br>
-              <label><input type="checkbox" name="" class="icheck" value="D" > Get discount of 500</label>{% endif %}
+                    {% if cart.coin_discount > 1 %} <a href="coin_add">
+                        <input type="checkbox" id="discountCheckbox" name="discount" class="icheck" value="D" checked>
+                        <label for="discountCheckbox"><small>🪙{{cart.coin_discount}} applied</small></label>
+                    </a> {% else %}
+                    {% if coin_available < 1000 or subtotal < 1000 %}<small>Minimum coin and cart amount should be more than 1000 to apply coins.</small> {% else %}
+                    <small>Coins available  🪙{{coin_available}},you can get maximum off of 30%.</small><br>
+                  
+                    <a href="coin_add">
+                        <input type="checkbox" id="discountCheckbox" name="discount" class="icheck" value="D">
+                        <label for="discountCheckbox">Get discount of 🪙{{cn}}</label>
+                    </a>
+             
+             {% endif %}{% endif %}
                     
                     <div class="table-responsive">
                         <table class="table table-centered mb-0 table-nowrap">
@@ -192,7 +202,7 @@
                                         </p>
                                         <p class="text-muted mb-0 mt-1">{{cartitem.product.price}} x {{cartitem.quantity}}</p>
                                     </td>
-                                  
+                                    {% endfor %}
 
                                 </tr>
                                     <td colspan="2">
@@ -202,7 +212,7 @@
                                         ₹{{subtotal}}
                                     </td>
                                 </tr>
-                                {% endfor %}
+                                
                                 <tr>
                                     <td colspan="2">
                                         <h6 class="font-size-14 m-0">Shipping Charge :</h6>
@@ -219,7 +229,14 @@
                                         -₹{{dis}}
                                     </td>
                                 </tr>                              
-                                    
+                                <tr>
+                                    <td colspan="2">
+                                        <h6 class="font-size-14 m-0">Coin Discount :</h6>
+                                    </td>
+                                    <td>
+                                        -🪙{{cart.coin_discount}}
+                                    </td>
+                                </tr> 
                                 <tr class="bg-light">
                                     <td colspan="2">
                                         <h5 class="font-size-14 m-0">Total:</h5>

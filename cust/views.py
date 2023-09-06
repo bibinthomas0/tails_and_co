@@ -125,7 +125,14 @@ def Profilepage(request):
     except:
         wallet=Wallet.objects.create(user=d)
         wallethistory=None
-    context = {"d": d, "numitems": numitems,'wallet':wallet,'wallethistory':wallethistory}
+    email = request.user.email
+    parts = email.split("@")
+    if len(parts) == 2:
+        code = parts[0]
+        print(f"Username: {code}")
+    else:
+        print("Invalid email address format")
+    context = {"d": d, "numitems": numitems,'wallet':wallet,'wallethistory':wallethistory,"code":code}
     return render(request, "user/profile.html", context)
 
 
@@ -136,18 +143,31 @@ def Registerpage(request):
         phone_number = request.POST.get("phone")
         pass1 = request.POST.get("pass1")
         password = request.POST.get("pass2")
+        referal = request.POST.get("referal")
         s_id = request.session.session_key
         if pass1 != password or pass1 is None or len(pass1) < 3:
-            key = "2"
+            key = "3"
             messages.error(request, f"Passwords are not matching or week. ({key})")
             return redirect("register")
         if CustomUser.objects.filter(email=email).exists():
-            key = "2"
+            key = "3"
             messages.error(
                 request, f"This email address is already registered. ({key})"
             )
             return redirect("register")
         else:
+            try:
+                print(referal)
+                user = CustomUser.objects.get(email__icontains=referal)
+                wallet = Wallet.objects.get(user=user)
+                Wallethistory.objects.create(wallet=wallet, task=f"For inviting {email}.", coins=500)
+                wallet.coins += 500
+                wallet.save()
+                print(f"Coins added to {wallet.user.email}'s wallet.")
+            except Wallet.DoesNotExist:
+                print(f"No wallet found for referral email: {referal}")
+            except Exception as e:
+                print(f"An error occurred: {str(e)}")
             custom_user_manager = CustomUserManager()
             custom_user_manager.send_otp_email(request, email)
             my_user = CustomUser.objects.create_user(
@@ -160,7 +180,7 @@ def Registerpage(request):
             my_user.save()
             user = authenticate(request, email=email, password=password)
             login(request, user)
-            request.session['s_id']==s_id
+            request.session['s_id']=s_id
             return redirect("otpp")
     return render(request, "register.html")
 
@@ -200,7 +220,7 @@ def Otppage(request):
         user_otp = request.POST.get("otp")
         stored_otp = request.session.get("otp")
         email = request.session.get("gmail")
-        if user_otp == stored_otp:
+        if stored_otp == user_otp:
             edit = CustomUser.objects.get(email=email)
             edit.is_verified = True
             edit.save()
@@ -437,12 +457,27 @@ def userorder_cancel(request,id):
     edit.status='C'
     edit.save()
     tt = edit.total_itemprice
-    wallet = Wallet.objects.get(user=request.user)
-    total_coins=wallet.coins
-    total_coins += tt
-    wallet.coins = total_coins 
-    wallet.save()
-    Wallethistory.objects.create(task=f"Product cancel {edit.product.product.name}",wallet=wallet,coins=edit.total_itemprice)
+    orderitem=OrderItem.objects.get(id=id)
+    if orderitem.order.coin_discount>0:
+        order = OrderItem.objects.filter(order=orderitem.order)
+        count = order.count()
+        f = orderitem.order.coin_discount//count
+        tt-=f
+    try:
+        c = orderitem.order.coupon_applied
+        order = OrderItem.objects.filter(order=orderitem.order)
+        count = order.count()
+        first = c.discount//count
+        fi = Decimal(first)
+        total_price= tt - fi 
+        print(total_price)
+    finally:
+        wallet = Wallet.objects.get(user=request.user)
+        total_coins=wallet.coins
+        total_coins += total_price
+        wallet.coins = total_coins 
+        wallet.save()
+    Wallethistory.objects.create(task=f"Product cancel {edit.product.product.name}",wallet=wallet,coins=total_price)
     id = edit.order.id
     return redirect('order_deatails',id)
 
@@ -461,6 +496,13 @@ def product_return(request,id):
     orderitem=OrderItem.objects.get(id=id)
     orderitem.returnstatus = True
     orderitem.save()
+    z =  orderitem.total_itemprice
+    
+    if orderitem.order.coin_discount>0:
+        order = OrderItem.objects.filter(order=orderitem.order)
+        count = order.count()
+        f = orderitem.order.coin_discount//count
+        z-=f
     try:
         c = orderitem.order.coupon_applied
         order = OrderItem.objects.filter(order=orderitem.order)
@@ -468,11 +510,13 @@ def product_return(request,id):
         k = 15
         first = c.discount//count
         fi = Decimal(first)
-        total_price= orderitem.total_itemprice - fi + k
+        total_price= z - fi + k
         print(total_price)
+        
+            
     except:
         k = 15
-        total_price =orderitem.total_itemprice + k
+        total_price =z + k
     finally:
         OrderReturn.objects.create(orderitem=orderitem,user=request.user,total_price=total_price)
         id = orderitem.order.id
@@ -516,7 +560,6 @@ def gtouser(request,s_id):
     if gcart:
         gcart_items = GcartItem.objects.filter(cart=gcart)
         for gcart_item in gcart_items:
-            # Use get_or_create to update quantity if the same product already exists in the user's cart
             cart_item, created = CartItem.objects.get_or_create(
                 cart=cart,
                 product=gcart_item.product,
@@ -528,7 +571,7 @@ def gtouser(request,s_id):
 
         guser.delete()
     
-    cart.save()  # Save the user's cart to update changes
+    cart.save() 
 
     return redirect('home')
 
@@ -585,7 +628,6 @@ def generate_invoice(request,id):
     context = {'order':order,'orderitems':orderitems ,'total':total}
     pdf = render_to_pdf('user/invoice.html', context)
 
-    # Set content type and headers for download
     response = HttpResponse(pdf, content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="invoice.pdf"'
 

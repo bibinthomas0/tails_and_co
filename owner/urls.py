@@ -40,5 +40,6 @@ path('orderchartsweekly/', views.sales_chart_weekly, name='orderchartsweekly'),
 path('orderchartsmonthly/', views.sales_chart_monthly, name='orderchartsmonthly'),
 path('order_filter/', views.order_filter_view, name='order_filter'),
 path('order_return_filter/', views.order_return_filter_view, name='order_return_filter'),
+path('sales_report_btn/', views.sales_report_btn, name='sales_report_btn'),
 
 ]

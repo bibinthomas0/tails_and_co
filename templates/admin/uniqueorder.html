@@ -81,10 +81,10 @@
                     </td>
                     
                     <td>{{item.quantity}}</td>
-                    <td>  <span class="badge badge-success" style="cursor: pointer;" data-toggle="modal" data-target="#modal{{ item.id }}">
+                    <td>  {% if item.status == 'C' %}<small></small> {% else %}<span class="badge badge-success" style="cursor: pointer;" data-toggle="modal" data-target="#modal{{ item.id }}">
                         update status
                     </span><span class="badge badge-danger ml-2" style="cursor: pointer;" data-toggle="modal" data-target="#modalConfirmDelete{{ item.id }}">cancel</span>
-                        </td>
+                    {% endif %}</td>
                     <div class="modal fade" id="modal{{ item.id }}">
                         <div class="modal-dialog" role="document">
                           <div class="modal-content">
@@ -150,6 +150,10 @@
                   <tr>
                     <td colspan="2">Subtotal</td>
                     <td class="text-end">₹{{sub_price}}</td>
+                  </tr>
+                  <tr>
+                    <td colspan="2">Coin discount</td>
+                    <td class="text-end">🪙{{order.coin_discount}}</td>
                   </tr>
                   <tr>
                     <td colspan="2">Shipping</td>

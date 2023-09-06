@@ -11,7 +11,7 @@ class Coupon(models.Model):
     valid_from = models.DateTimeField()
     valid_to = models.DateTimeField()
     active = models.BooleanField(default=True)
-    
+    category = models.CharField(max_length=50)
     def __str__(self):
         return self.code
     
@@ -24,6 +24,7 @@ class Cart(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     coupon=models.ForeignKey(Coupon, on_delete=models.DO_NOTHING,null=True,blank=True)
+    coin_discount = models.IntegerField(default=0)
     def __str__(self):
         return self.user.name
 
@@ -63,7 +64,7 @@ class Order(models.Model):
     slug  = models.CharField(max_length=200,null=True,blank=True)
     payment_method = models.CharField(max_length=20)
     coupon_applied=models.ForeignKey(Coupon,on_delete=models.DO_NOTHING,null=True,blank=True)
-    coin_discount = models.IntegerField(null=True)
+    coin_discount = models.IntegerField(default=0)
     order_id = models.PositiveBigIntegerField()
     def __str__(self):
         return f"Order {self.pk} for {self.user.name}"

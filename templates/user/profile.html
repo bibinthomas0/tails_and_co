@@ -119,9 +119,8 @@
     {% block contents %}
 
 <!------ Include the above in your HEAD tag ---------->
-
 <div class="container emp-profile">
-            <form method="post">
+            
                 <div class="row">
                     <div class="col-md-4 pl-3">
                         <div class="profile-img">
@@ -138,15 +137,15 @@
                                           <div class="col-md-6">
                                               <label>Name</label>
                                           </div>
-                                          <div class="col-md-6 ">
+                                          <div class="col-md-4 ">
                                               <p>{{d.name}}</p>
                                           </div>
                                       </div>
                                       <div class="row">
-                                          <div class="col-md-6">
+                                          <div class="col-md-4">
                                               <label>Email</label>
                                           </div>
-                                          <div class="col-md-6">
+                                          <div class="col-md-4">
                                               <p>{{d.email}}</p>
                                           </div>
                                       </div>
@@ -154,16 +153,59 @@
                                           <div class="col-md-6">
                                               <label>Phone</label>
                                           </div>
-                                          <div class="col-md-6">
+                                          <div class="col-md-4">
                                               <p>{{d.phone_number}}</p>
                                           </div>
                                       </div>
                                      
                           </div></div>
                     </div>
-                    <div class="col-sm-2"></div>
+                    
                     <div class="col-sm-4">
-                      <!-- Monthly Earnings -->
+                      <div class="card p-3 text-center">
+                          
+                        <div class="position-relative">
+                            
+                            <img src="https://i.imgur.com/iicvsZ6.png">
+                            <span class="dots"><i class="fa fa-plus"></i></span>
+                        </div>
+                        
+                        <div>
+                            <h5>Invite & Earn</h5>
+                            <span class="earn-text">Earn upto 🪙500 coins for inviting friends.</span>
+                        </div>
+                        
+                        
+                        <div class="px-3 mt-2">
+                            <div class="d-flex justify-content-between align-items-center">
+                               
+                            </div>
+                            <!-- <div class="progress" style="height:4px;">
+                              <div class="progress-bar bg-success" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div> -->
+                            
+                        </div>
+                        
+                        <div class="px-3 mt-2 d-flex gap-2">
+                            <small>Referral code: </small><medium style="font-weight: 600;">{{code}}</medium>
+                            <!-- <span class="btn-success btn-sm">Invite</span> -->
+                        </div>
+                        
+                        
+                        
+                       
+                        
+                      
+                        
+                        
+                       
+                        
+                    </div>
+                     
+                     
+                    </div>
+                    <div class="col-md-4">
+    
                       <div class="card">
                         <div class="card-body">
                           <div class="row alig n-items-start">
@@ -210,17 +252,15 @@
                           </ul>
                         </div>
                       </div>
-                    </div>
+                     
+                      
+                      
+                  </div>
                 </div>
-                <div class="row">
-                    
-                    <div class="col-md-4">
-                       
-                            
-                        </div>
-                    </div>
+              
+             
                 </div>
-            </form>           
+                     
         </div>
     
     
@@ -232,8 +272,12 @@
 </div>
  {% endblock  %}
   {% block footer %}{% endblock  %}
-  {% block script %}{% endblock  %}
+  {% block script %}
+
+
+  {% endblock  %}
   {% block js %}
+
 
   <script src="{% static 'assets/libs/jquery/dist/jquery.min.js' %}"></script>
   <script src="{% static 'assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js' %}"></script>

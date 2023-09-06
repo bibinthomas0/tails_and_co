@@ -35,7 +35,7 @@
   <div class="container">
     <div class="d-flex justify-content-between align-items-center py-3">
       <h2 class="h5 mb-0">
-        <a href="#" class="text-muted"></a> Order #16123222
+        <a href="#" class="text-muted"></a> Order {{order.order_id}}
       </h2>
     </div>
     <div class="row">
@@ -168,6 +168,10 @@
                   <td class="text-danger text-end">
                     -₹{{order.coupon_applied.discount}}
                   </td>
+                </tr>
+                <tr>
+                  <td colspan="2">Coin discount</td>
+                  <td class="text-end">🪙{{order.coin_discount}}</td>
                 </tr>
                 <tr class="fw-bold">
                   <td colspan="2">TOTAL</td>

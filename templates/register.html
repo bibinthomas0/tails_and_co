@@ -79,10 +79,28 @@
                 <!-- 2 column grid layout with text inputs for the first and last names -->
                 <div class="row">
                   <div class="col-md-6 mb-4">
+                    {% if messages %}
+                  
+                    {% for message in messages %}
+                        {% if '3' in message.message %}
+                            <p class="error" style="color: red;">{{ message.message|cut:"(3)" }}</p>
+                        {% else %}
+                        {% endif %}
+                    {% endfor %}
+              
+            {% endif %}
                     <div class="form-outline">
                       <input type="text" id="form3Example1" class="form-control" name="name" />
                       <label class="form-label" for="form3Example1">Name</label>
                     </div>
+                  </div>
+                  <div class="col-md-2 mb-2"> </div>
+                  <div class="col-md-4 mb-4">
+                    <div class="form-outline">
+                      <input type="text" id="form3Example7" class="form-control" name="referal" value="code" />
+                      <label class="form-label" for="form3Example1">Have a referral code</label>
+                    </div>
+
                   </div>
                 </div>
                 <div class="row">
@@ -94,19 +112,21 @@
                   </div>
                 </div>
                 <div class="form-outline mb-4">
+                 
                   <input type="email" id="form3Example3" class="form-control" name="email"/>
                   <label class="form-label" for="form3Example3">Email address</label>
                 </div>
                 <div class="row">
                     <div class="col-md-6 mb-4">
                       <div class="form-outline">
-                        <input type="password" id="form3Example2" class="form-control" name="pass1" />
+                        <input type="password" id="form3Example5" class="form-control" name="pass1" />
                         <label class="form-label" for="form3Example2">Password</label>
                       </div>
                     </div>
                   </div>
                 <!-- Password input -->
                 <div class="form-outline mb-4">
+                 
                   <input type="password" id="form3Example4" class="form-control" name="pass2" />
                   <label class="form-label" for="form3Example4">Confirm Password</label>
                 </div>

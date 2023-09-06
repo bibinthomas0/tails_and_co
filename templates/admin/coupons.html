@@ -301,6 +301,7 @@
                     <th>Offer</th>
                     <th>Valid from</th>
                     <th>Valid till</th>
+                    <th>category</th>
                     <th>activate</th>
                     <th>change status</th>
                 </tr>
@@ -320,6 +321,7 @@
                     <td>{{data.discount}}</td>
                     <td>{{data.valid_from}}</td>
                     <td>{{data.valid_to}}</td>
+                    <td>{{data.category}}</td>
                         <td>{{data.active}}</a>
                     </td><td><a href="#deletesubcategoryModal" class="delete" data-toggle="modal" data-p-id="{{ data.id }}"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xe762;</i></a></td>
                 </tr>{% endfor %}
@@ -366,6 +368,15 @@
                     <input type="text" id="datepicker-expiry" class="form-control" placeholder="Select a date" name="to" required>
         
                 </div>	
+                <div class="form-group">
+                    <label for="select2-multiple" class="control-label">Select</label>
+                                  <select id="select2-multiple" class="form-control select2-single"  name="category">
+                                    <option value="5">All</option>
+                                      <option value="1">Pets</option>
+                                      <option value="3">Food</option>
+                                      <option value="4">Accessories</option>
+                                  </select>
+                </div>
                
                	
             </div>

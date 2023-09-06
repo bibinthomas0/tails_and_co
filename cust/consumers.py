@@ -53,7 +53,6 @@ class NotificationConsumer(WebsocketConsumer):
         
         
 
-from channels.generic.websocket import AsyncWebsocketConsumer
 
 class OrderNotificationConsumer(AsyncWebsocketConsumer):
     async def connect(self):
