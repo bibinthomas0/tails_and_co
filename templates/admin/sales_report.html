@@ -1,0 +1,228 @@
+
+{% extends 'admin/index.html' %}
+
+
+
+{% block css %}
+
+ 
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+<style>@import url('https://fonts.googleapis.com/css?family=Assistant');
+
+    body {
+        background: #eee;
+        font-family: Assistant, sans-serif
+    }
+    
+    .cell-1 {
+      border-collapse: separate;
+      border-spacing: 0 4em;
+      background: #ffffff;
+      border-bottom: 5px solid transparent;
+      background-color: gold;
+      background-clip: padding-box;
+      cursor: pointer;
+    }
+    
+    thead {
+      background: #ffffff;
+    }
+    
+    
+    .table-elipse {
+      cursor: pointer;
+    }
+    
+    #demo {
+      -webkit-transition: all 0.3s ease-in-out;
+      -moz-transition: all 0.3s ease-in-out;
+      -o-transition: all 0.3s 0.1s ease-in-out;
+      transition: all 0.3s ease-in-out;
+    }
+    
+    .row-child {
+      background-color: #000;
+      color: #fff;
+    }</style>
+
+{% endblock  %}
+{% block  content %}
+
+
+
+
+<div class="col-lg-12 d-flex align-items-stretch" style="justify-content: flex-end;">
+  <div class="card w-100">
+    <div class="card-body p-4">
+      <h5 class="card-title fw-semibold mb-4 mt-5">Sales Report</h5>
+      <header class="card-header">
+        <div class="row align-items-center " >
+            <form action="{% url 'daily' %}" method="post">
+                {% csrf_token %}
+                
+                <span style="float: left; padding: 5px;">From</span>
+                <div class="col-md-2 col-6" style="float: left;" >
+                    <input type="date" value="{{ fromDate }}" class="form-control" name="fromDate" required>
+                </div>
+                <span style="float: left; padding: 5px;">To</span>
+                <div class="col-md-2 col-6" style="float: left;">
+                    <input type="date" value="{{ toDate }}" class="form-control" name="toDate" required>
+                </div>
+                <!-- <div class="col-md-2 col-6" style="float: left;">
+                <select name="timePeriod" class="form-select" required>
+                  <option value="all">All</option>
+                  <option value="daily">Daily</option>
+                  <option value="weekly">Weekly</option>
+                  <option value="monthly">Monthly</option>
+                  <option value="yearly">Yearly</option>
+              </select>
+            </div> -->
+                <div >
+                    <button type="submit" class="btn btn-primary rounded font-sm"style=" padding: 4px; margin: 5px;"  >Submit</button>
+                </div>
+               
+            </form>
+           
+        </div>
+    </header>
+
+     
+   
+      <div class="table-responsive">
+        <button class="btn btn-primary" id="pdfButton"  style="float: right; margin: 5px;">
+          PDF &nbsp<i class="far fa-file text-light"></i>
+        </button>
+        <button class="btn btn-primary" onclick="exportToExcel()" style="float: right; margin: 5px;">
+          Excel &nbsp<i class="far fa-file-pdf text-light"></i>
+        </button>
+        <table class="table text-nowrap mb-0 align-middle">
+          <thead class="text-dark fs-4">
+            <tr>
+              <th class="border-bottom-0">
+                <h6 class="fw-semibold mb-0">Sn.</h6>
+              </th>
+              <th class="border-bottom-0">
+                <h6 class="fw-semibold mb-0">Date</h6>
+              </th>
+              <th class="border-bottom-0">
+                <h6 class="fw-semibold mb-0">Oder id</h6>
+              </th>
+              <th class="border-bottom-0">
+                <h6 class="fw-semibold mb-0">Customer</h6>
+              </th>
+              <th class="border-bottom-0">
+                <h6 class="fw-semibold mb-0">Product</h6>
+              </th>
+              <th class="border-bottom-0">
+                <h6 class="fw-semibold mb-0">Payment method</h6>
+              </th>
+              <th class="border-bottom-0">
+                <h6 class="fw-semibold mb-0">Quantity</h6>
+              </th>
+              <th class="border-bottom-0">
+                <h6 class="fw-semibold mb-0">status</h6>
+              </th>
+              <th class="border-bottom-0">
+                <h6 class="fw-semibold mb-0">Total</h6>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+          
+            {% for item in items %} 
+
+            <tr>
+              <td class="border-bottom-0">
+                <h6 class="fw-semibold mb-0">{{ forloop.counter }}</h6>
+              </td>
+              <td class="border-bottom-0">
+                <h6 class="fw-semibold mb-1">{{item.order.created_at}}</h6>
+              </td>
+              <td class="border-bottom-0">
+                <h6 class="fw-semibold mb-1">{{item.order.order_id}}</h6>
+              </td>
+              <td class="border-bottom-0">
+                <h6 class="fw-semibold mb-1">{{item.order.address.custom_name}}</h6>
+              </td>
+              <td class="border-bottom-0">
+                <h6 class="fw-semibold mb-1">{{item.product.product.name}}</h6>
+              </td> 
+              <td class="border-bottom-0">
+                <h6 class="fw-semibold mb-1">{{item.order.payment_method}}</h6>
+              </td> 
+              <td class="border-bottom-0">
+                <h6 class="fw-semibold mb-1">{{item.quantity}}</h6>
+              </td> 
+              <td class="border-bottom-0">
+                <h6 class="fw-semibold mb-1">{{item.get_status_display}}</h6>
+              </td> 
+              <td class="border-bottom-0">
+                <h6 class="fw-semibold mb-1">{{item.total_itemprice}}</h6>
+              </td> 
+            {%endfor%}
+         
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+
+<script>
+  document.getElementById("pdfButton").addEventListener("click", function () {
+    const table = document.querySelector(".table");
+    const pdfOptions = {
+      margin: 10,
+      filename: 'tails_and_co.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    html2pdf().from(table).set(pdfOptions).save();
+  });
+</script>
+
+<script>
+  function exportToExcel() {
+    var data = [
+      ['Sales Report'],
+      ['Sn.','Date','year','time','order_id','Customer','Product', 'Payment method', 'Quantity','status', 'Price']
+      {% for item in items %}
+      , [{{ forloop.counter }}, '{{item.order.created_at}}','{{item.order.order_id}}', '{{item.order.address.custom_name }}', '{{ item.product.product.name }}', '{{item.order.payment_method}}',
+      '{{item.quantity}}','{{item.get_status_display}}','{{item.total_itemprice}}']
+      {% endfor %}
+    ];
+
+    // Create a CSV string
+    var csvContent = data.map(function(row) {
+      return row.join(',');
+    }).join('\n');
+
+    // Create a Blob containing the CSV data
+    var blob = new Blob([csvContent], { type: 'text/csv' });
+
+    // Create a link to download the Blob as a file
+    var link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'tails_and_co.csv'; // You can change the filename here
+    link.style.display = 'none';
+
+    // Append the link to the document
+    document.body.appendChild(link);
+
+    // Click the link to trigger the download
+    link.click();
+
+    // Clean up the link
+    document.body.removeChild(link);
+  }
+</script>
+{% endblock  %}

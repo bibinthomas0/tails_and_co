@@ -41,5 +41,9 @@ path('orderchartsmonthly/', views.sales_chart_monthly, name='orderchartsmonthly'
 path('order_filter/', views.order_filter_view, name='order_filter'),
 path('order_return_filter/', views.order_return_filter_view, name='order_return_filter'),
 path('sales_report_btn/', views.sales_report_btn, name='sales_report_btn'),
+path('sales_report/', views.sales_report, name='sales_report'),
+path('monthly/',views.sales_monthly,name='monthly'),
+path('daily/',views.sales_daily,name='daily'),
+path('deletecoupon/<int:id>/', views.deletecoupon, name='deletecoupon'),
 
 ]

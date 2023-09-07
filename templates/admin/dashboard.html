@@ -2,6 +2,11 @@
 
 {% block content %} 
 
+<style>.my-button:hover {
+  background-color: green; /* Change the background color to white on hover */
+  color: #ffff; /* Change the text color to the Bootstrap primary color on hover */
+}</style>
+<div class="container" style="background-color: #ffff; padding:20px;">
     <div class="row">
      
         <div class="col-md-6">
@@ -148,4 +153,7 @@
   </div>
 </a>
 </div></div>
+<a href="{% url 'sales_report' %}"> <button type="button" class="btn btn-primary btn-lg btn-block my-button">See full sales report</button></a>
+</div>
+
 {% endblock  %}

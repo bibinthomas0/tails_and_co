@@ -95,6 +95,7 @@ def CartDetail(request):
         coupons = Coupon.objects.all()
         print(coupons)
         total_stock = sum(item.product.stock for item in cart_items)
+    print(request.user)
     context = {
         "cart_items": cart_items,
         "total_price": total_price,
@@ -405,7 +406,6 @@ def update_cart_quantity(request):
             cart_item.quantity = quantity
             cart_item.save()
             if cart.coupon is not None:
-                print("hhhhhhhh")
                 cart_items = CartItem.objects.filter(cart=cart)
                 cart_items = cart_items.annotate(
                     total_product_price=F("product__price") * F("quantity")
@@ -450,7 +450,7 @@ def apply_coupon(request):
                 "success": False,
                 "message": f"Minimum cart amount ₹{k}.",
             }
-        elif not CartItem.objects.filter(cart=cart,product__product__category=coup.category).exists() and coup.category!=2:
+        elif not CartItem.objects.filter(cart=cart,product__product__category=coup.category).exists() and coup.category!='2':
             category = Category.objects.get(id=coup.category)
             response_data = {
                 "success": False,

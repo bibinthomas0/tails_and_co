@@ -462,7 +462,7 @@ def userorder_cancel(request,id):
         order = OrderItem.objects.filter(order=orderitem.order)
         count = order.count()
         f = orderitem.order.coin_discount//count
-        tt-=f
+        tt+=f
     try:
         c = orderitem.order.coupon_applied
         order = OrderItem.objects.filter(order=orderitem.order)
@@ -502,7 +502,7 @@ def product_return(request,id):
         order = OrderItem.objects.filter(order=orderitem.order)
         count = order.count()
         f = orderitem.order.coin_discount//count
-        z-=f
+        z+=f
     try:
         c = orderitem.order.coupon_applied
         order = OrderItem.objects.filter(order=orderitem.order)

@@ -50,6 +50,12 @@ from django.db.models import Count
 from .forms import OrderStatusFilterForm, OrderReturnStatusFilterForm
 
 
+
+
+
+
+
+
 # Create your views here.
 def AdminDashboard(request):
     if request.method == "POST":
@@ -281,7 +287,7 @@ def Deleteuser(request, id):
     return redirect("adminusers")
 
 
-# category management
+
 def Admincategory(request):
     if request.method == "POST":
         category = request.POST.get("category")
@@ -596,11 +602,6 @@ def sales_chart_weekly(request):
     }
     return render(request, "admin/chart.html", context)
 
-
-from datetime import datetime, timedelta
-from django.utils import timezone
-
-
 def sales_chart_monthly(request):
     current_date = datetime.now(timezone.utc)
     current_year = current_date.year
@@ -712,3 +713,95 @@ def sales_report_btn(request):
         "k": 5,
     }
     return render(request, "admin/chart.html", context)
+
+
+
+def sales_report(request):
+    if request.method=='POST':
+        from_date_str=request.POST.get('from')
+        To_date_str=request.POST.get('to')
+        end_date = datetime.now(timezone.utc)
+        from_date = datetime.strptime(from_date_str, "%m/%d/%Y").strftime(
+            "%Y-%m-%d %H:%M:%S"
+        )
+        to_date = datetime.strptime(To_date_str, "%m/%d/%Y").strftime(
+            "%Y-%m-%d %H:%M:%S"
+        )
+    else: 
+        from_date = None
+        to_date = None
+    end_date = datetime.now(timezone.utc)
+    week_date = datetime.now(timezone.utc) - timedelta(days=7) 
+    order = Order.objects.filter(created_at__range=(week_date, end_date))
+    items = []
+    
+    for ord in order:
+        item = OrderItem.objects.filter(order=ord)
+        
+        for ite in item:
+            items.append(ite)
+    context = {
+        'order': order,
+        'items': items
+    }
+    return render(request, 'admin/sales_report.html', context)
+
+
+def sales_monthly(request):
+    if request.method=='POST':
+        from_date_str=request.POST.get('from')
+        To_date_str=request.POST.get('to')
+        end_date = datetime.now(timezone.utc)
+        from_date = datetime.strptime(from_date_str, "%m/%d/%Y").strftime(
+            "%Y-%m-%d %H:%M:%S"
+        )
+        to_date = datetime.strptime(To_date_str, "%m/%d/%Y").strftime(
+            "%Y-%m-%d %H:%M:%S"
+        )
+    else: 
+        from_date = None
+        to_date = None
+    end_date = datetime.now(timezone.utc)
+    month_date = datetime.now(timezone.utc) - timedelta(days=30)
+    order = Order.objects.filter(created_at__range=(month_date, end_date))
+    items = []
+    
+    for ord in order:
+        item = OrderItem.objects.filter(order=ord)
+        
+        for ite in item:
+            items.append(ite)
+    context = {
+        'order': order,
+        'items': items
+    }
+    return render(request, 'admin/sales_report.html', context)
+
+def sales_daily(request):
+    if request.method == 'POST':
+        from_date_str = request.POST.get('fromDate')
+        to_date_str = request.POST.get('toDate')
+
+        from_date = datetime.strptime(from_date_str, "%Y-%m-%d").strftime(
+             "%Y-%m-%d %H:%M:%S"
+        )
+        to_date = datetime.strptime(to_date_str, "%Y-%m-%d").strftime(
+            "%Y-%m-%d %H:%M:%S"
+        )
+    else: 
+        from_date = None
+        to_date = None
+    orders = Order.objects.filter(created_at__range=(from_date, to_date))
+
+    items = OrderItem.objects.filter(order__in=orders)
+    
+    context = {
+        'order': orders,
+        'items': items
+    }
+    
+    return render(request, 'admin/sales_report.html', context)
+def deletecoupon(request,id):
+    coup = Coupon.objects.get(id=id)
+    coup.delete()
+    return redirect('admincoupon')
