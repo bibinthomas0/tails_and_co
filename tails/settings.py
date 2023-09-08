@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'channels',
     'pdfkit',
    
+   
 ]
 
 MIDDLEWARE = [
